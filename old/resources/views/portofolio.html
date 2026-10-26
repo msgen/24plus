@@ -1,0 +1,40 @@
+<div class="container">
+    <div class="section-title justify-content-center mb-4 mb-md-8 wow fadeInUp">
+        <span class="shape shape-left bg-info"></span>
+        <h2 class="text-danger">Portofoliu</h2>
+        <span class="shape shape-right bg-info"></span>
+    </div>
+
+    <div class="d-flex justify-content-center wow fadeInUp">
+        <div id="filters" class="button-group">
+            <button class="button is-checked" data-filter="*">Toate</button>
+            {% for item in portofolio.classification %}
+                <button class="button" data-filter=".{{item.value}}">{{item.formatted}}</button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="gallery-grid">
+        <div class="row grid wow fadeInUp">
+            {% for item in portofolio.items %}
+            <div class="col-md-4 col-lg-3 col-xs-12 element-item {{item.classification}}">
+                <div class="media media-hoverable justify-content-center">
+                    <div class="position-relative w-100">
+                        <img class="media-img w-100" data-src="assets/img/{{item.image.smallUrl}}" src="assets/img/{{item.image.smallUrl}}"
+                            alt="gallery-img">
+                        <a class="media-img-overlay" data-fancybox="gallery" href="assets/img/{{item.image.bigUrl}}">
+                            <div class="btn btn-squre">
+                                <i class="fa fa-search-plus"></i>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- <div class="btn-aria text-center mt-4 wow fadeInUp">
+        <a href="/portofoliu" class="btn btn-danger text-uppercase box-shadow">Vezi tot</a>
+    </div> -->
+</div>

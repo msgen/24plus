@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block pluginsCss %}
+<link
+  href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css"
+  rel="stylesheet" />
+<link href="/assets/css/admin.css" rel="stylesheet">
+{% endblock %}
+
+{% block pluginsJs %}
+<script
+  src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+<script src="/assets/js/modules/editable-models.js"></script>
+<script src="/assets/js/bootbox.min.js"></script>
+<script src="/assets/js/modules/util.js"></script>
+<script src="/assets/js/modules/client.js"></script>
+<script src="/assets/js/modules/image.js"></script>
+<script src="/assets/js/admin.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  {% if userIsAuthenticated %}
+  <div class="position-relative mb-8">
+    <div class="img-editable add-client">
+      <span data-entity-type="{{entity.type}}">Adaugati client</span>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="section-title justify-content-center mb-4 mb-md-8 wow fadeInUp">
+    <span class="shape shape-left bg-info"></span>
+    <h2 class="text-danger">Clienti</h2>
+    <span class="shape shape-right bg-info"></span>
+  </div>
+
+  <div class="row">
+    {% for client in clients %}
+    <div class="col-md-3 col-xs-12">
+      <div class="card position-relative">
+        {% if userIsAuthenticated %}
+        <div class="client-delete">
+          <i class="fa fa-times-circle" data-pk="{{client.id}}"></i>
+        </div>
+        {% endif %}
+        <a href="{{client.url}}" target="blank">
+          <img class="card-img-top" src="assets/img/{{client.image}}"
+            alt="{{client.name}}">
+        </a>
+        <div class="card-body">
+          <h5 class="card-title">{{client.name}}</h5>
+          <a href="/portofoliu/{{client.name}}/{{client.id}}" class="btn
+            btn-primary">Lucrari</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

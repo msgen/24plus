@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %} - 24Plus.ro</title>
+
+    <!-- Plugins css Style -->
+    <link href="/assets/plugins/font-awesome/css/font-awesome.min.css"
+      rel="stylesheet">
+    <link href="/assets/plugins/no-ui-slider/nouislider.min.css"
+      rel="stylesheet" />
+    <link href="/assets/plugins/owl-carousel/owl.carousel.min.css"
+      rel="stylesheet"
+      media="screen">
+    <link href="/assets/plugins/owl-carousel/owl.theme.default.min.css"
+      rel="stylesheet" media="screen">
+    <link href="/assets/plugins/fancybox/jquery.fancybox.min.css"
+      rel="stylesheet" />
+    <link href="/assets/plugins/isotope/isotope.min.css" rel="stylesheet" />
+    <link href="/assets/plugins/animate/animate.css" rel="stylesheet">
+    <link href="/assets/plugins/select2/css/select2.min.css" rel="stylesheet">
+    <link href="/assets/plugins/slippry/slippry.css" rel="stylesheet">
+
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Dosis:300,400,600,700|Open+Sans:300,400,600,700"
+      rel="stylesheet">
+
+    <!-- Custom css -->
+    <link href="/assets/css/main.css" id="option_style" rel="stylesheet">
+    {% block pluginsCss %}{% endblock %}
+
+    <!-- Favicon -->
+    <link href="/assets/img/favicon.png" rel="shortcut icon">
+
+  </head>
+
+  <body id="body" class="up-scroll">
+    <!-- ====================================
+    ——— PRELOADER
+    ===================================== -->
+    {{ include('preloader.html') }}
+
+    <!-- ====================================
+    ——— HEADER
+    ===================================== -->
+    <header class="header" id="pageTop">
+      <!-- Top Color Bar -->
+      {{ include('top-color-bar.html') }}
+
+      <!-- Navbar -->
+      <nav class="navbar navbar-expand-md navbar-scrollUp navbar-sticky
+        navbar-dark" style="background-color: #2C2B27">
+        {{ include('menu.html') }}
+      </nav>
+    </header>
+
+    {% block content %}{% endblock %}
+
+    <!-- ====================================
+      ———	FOOTER
+      ===================================== -->
+    <footer class="footer-bg-img">
+      {{ include('footer.html') }}
+    </footer>
+
+    <!--scrolling-->
+    <div class="scrolling">
+      <a href="#pageTop" class="back-to-top" id="back-to-top" style="opacity:
+        1;">
+        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+      </a>
+    </div>
+
+    <script src="/assets/plugins/jquery/jquery.min.js"></script>
+    <script src="/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/plugins/owl-carousel/owl.carousel.min.js"></script>
+    <script src="/assets/plugins/fancybox/jquery.fancybox.min.js"></script>
+    <script src="/assets/plugins/isotope/isotope.min.js"></script>
+    <script src="/assets/plugins/smoothscroll/SmoothScroll.js"></script>
+    <script src="/assets/plugins/syotimer/jquery.syotimer.min.js"></script>
+    <script src="/assets/plugins/select2/js/select2.min.js"></script>
+    <script src="/assets/plugins/no-ui-slider/nouislider.min.js"></script>
+    <script src="/assets/plugins/lazyestload/lazyestload.js"></script>
+    <script src="/assets/plugins/velocity/velocity.min.js"></script>
+    <script src="/assets/plugins/slippry/slippry.min.js"></script>
+    <script src="/assets/plugins/wow/wow.min.js"></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDU79W1lu5f6PIiuMqNfT1C6M0e_lq1ECY"></script>
+    <script src="/assets/js/main.js"></script>
+    <script src="/assets/js/modules/contact.js"></script>
+    {% block pluginsJs %}{% endblock %}
+  </body>
+
+</html>

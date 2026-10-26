@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block pluginsCss %}
+{% endblock %}
+
+{% block pluginsJs %}
+{% endblock %}
+
+{% block content %}
+<div class="main-wrapper home">
+
+  <!--====================================
+  ——— BEGIN MAIN SLIDE LIST
+  ===================================== -->
+  <section class="rev_slider_wrapper fullwidthbanner-container over"
+    dir="ltr">
+    {{ include('slider.html') }}
+  </section>
+
+  <!-- ====================================
+  ———	BOX SECTION
+  ===================================== -->
+  <section class="d-none d-sm-block mtn-50">
+    {{ include('box.html') }}
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12 well pl-2 pr-2">
+            <p>
+              <strong>24 Plus Media</strong> este o firma de productie publicitara, specializata in
+              productie materiale publicitare,
+              decorari si personalizari auto, vitrine, spatii comerciale, semnalistica
+              de interior si exterior,
+              print de mari dimensiuni indoor si outdoor, tipar digital si obiecte
+              promotionale.
+            </p>
+            <p>
+              <strong>Echipa noastra de specialisti</strong> va ofera solutii complete, de la design la
+              implementare, consiliere in alegerea materialelor optime si dezvoltarea produselor,
+              productie, asamblare, montaj, implementare si logistica.
+            </p>
+            <p>
+              <strong>Construim</strong> o relatie de incredere cu fiecare dintre clientii nostri si ii
+              asiguram ca vom fi mereu disponibili, venind cu solutii si idei inovatite
+              in sprijinul business-ului lor. Ne adaptam cerintelor, reducem la maxim
+              timpii de livrare si oferim solutii de calitate la preturi corecte.
+            </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================
+  ———	OUR WORK
+  ===================================== -->
+  <section class="pt-9 pb-7 py-md-10" id="gallery">
+    {{ include('portofolio.html') }}
+  </section>
+
+  <!-- ====================================
+  ———	CLIENTS
+  ===================================== -->
+  <section class="pt-9 pb-6 py-md-7">
+    {{ include('clients.html') }}
+  </section>
+
+  <!-- ====================================
+  ———	TESTIMONIALS
+  ===================================== -->
+  <section class="pt-9 pb-2 py-md-10 bg-purple" id="teachers"
+    style="background-image: url(assets/img/background/avator-bg.png);">
+    {{ include('testimonials.html') }}
+  </section>
+
+  <!-- ====================================
+  ———	CONTACT SECTION
+  ===================================== -->
+  <section class="bg-light py-7 py-md-10">
+    {{ include('contact.html') }}
+  </section>
+
+</div> <!-- element wrapper ends -->
+{% endblock %}

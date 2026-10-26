@@ -1,0 +1,171 @@
+[02-Oct-2019 21:20:22 Europe/Bucharest] PHP Warning:  require(/home/plusro/public_html/public/../bootstrap/app.php): failed to open stream: No such file or directory in /home/plusro/public_html/public/index.php on line 5
+[02-Oct-2019 21:20:22 Europe/Bucharest] PHP Fatal error:  require(): Failed opening required '/home/plusro/public_html/public/../bootstrap/app.php' (include_path='.:/opt/cpanel/ea-php72/root/usr/share/pear') in /home/plusro/public_html/public/index.php on line 5
+[02-Oct-2019 21:20:26 Europe/Bucharest] PHP Warning:  require(/home/plusro/public_html/public/../bootstrap/app.php): failed to open stream: No such file or directory in /home/plusro/public_html/public/index.php on line 5
+[02-Oct-2019 21:20:26 Europe/Bucharest] PHP Fatal error:  require(): Failed opening required '/home/plusro/public_html/public/../bootstrap/app.php' (include_path='.:/opt/cpanel/ea-php72/root/usr/share/pear') in /home/plusro/public_html/public/index.php on line 5
+[02-Oct-2019 21:20:26 Europe/Bucharest] PHP Warning:  require(/home/plusro/public_html/public/../bootstrap/app.php): failed to open stream: No such file or directory in /home/plusro/public_html/public/index.php on line 5
+[02-Oct-2019 21:20:26 Europe/Bucharest] PHP Fatal error:  require(): Failed opening required '/home/plusro/public_html/public/../bootstrap/app.php' (include_path='.:/opt/cpanel/ea-php72/root/usr/share/pear') in /home/plusro/public_html/public/index.php on line 5
+[02-Oct-2019 21:20:44 Europe/Bucharest] PHP Warning:  require(/home/plusro/public_html/bootstrap/../vendor/autoload.php): failed to open stream: No such file or directory in /home/plusro/public_html/bootstrap/app.php on line 5
+[02-Oct-2019 21:20:44 Europe/Bucharest] PHP Fatal error:  require(): Failed opening required '/home/plusro/public_html/bootstrap/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php72/root/usr/share/pear') in /home/plusro/public_html/bootstrap/app.php on line 5
+[02-Oct-2019 21:20:44 Europe/Bucharest] PHP Warning:  require(/home/plusro/public_html/bootstrap/../vendor/autoload.php): failed to open stream: No such file or directory in /home/plusro/public_html/bootstrap/app.php on line 5
+[02-Oct-2019 21:20:44 Europe/Bucharest] PHP Fatal error:  require(): Failed opening required '/home/plusro/public_html/bootstrap/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php72/root/usr/share/pear') in /home/plusro/public_html/bootstrap/app.php on line 5
+[02-Oct-2019 21:21:35 Europe/Bucharest] PHP Fatal error:  Uncaught Twig_Error_Loader: The "/home/plusro/public_html/bootstrap/../resources/views" directory does not exist ("/home/plusro/public_html/bootstrap/../resources/views"). in /home/plusro/public_html/vendor/twig/twig/lib/Twig/Loader/Filesystem.php:101
+Stack trace:
+#0 /home/plusro/public_html/vendor/slim/twig-view/src/Twig.php(151): Twig_Loader_Filesystem->addPath('/home/plusro/pu...')
+#1 /home/plusro/public_html/vendor/slim/twig-view/src/Twig.php(57): Slim\Views\Twig->createLoader(Array)
+#2 /home/plusro/public_html/bootstrap/app.php(13): Slim\Views\Twig->__construct('/home/plusro/pu...', Array)
+#3 /home/plusro/public_html/vendor/pimple/pimple/src/Pimple/Container.php(118): {closure}(Object(Slim\Container))
+#4 /home/plusro/public_html/vendor/slim/slim/Slim/Container.php(123): Pimple\Container->offsetGet('view')
+#5 /home/plusro/public_html/bootstrap/app.php(46): Slim\Container->get('view')
+#6 /home/plusro/public_html/public/index.php(5): require('/home/plusro/pu...')
+#7 {main}
+  thrown in /home/plusro/public_html/vendor/twig/twig/lib/Twig/Loader/Filesystem.php on line 101
+[02-Oct-2019 21:21:35 Europe/Bucharest] PHP Fatal error:  Uncaught Twig_Error_Loader: The "/home/plusro/public_html/bootstrap/../resources/views" directory does not exist ("/home/plusro/public_html/bootstrap/../resources/views"). in /home/plusro/public_html/vendor/twig/twig/lib/Twig/Loader/Filesystem.php:101
+Stack trace:
+#0 /home/plusro/public_html/vendor/slim/twig-view/src/Twig.php(151): Twig_Loader_Filesystem->addPath('/home/plusro/pu...')
+#1 /home/plusro/public_html/vendor/slim/twig-view/src/Twig.php(57): Slim\Views\Twig->createLoader(Array)
+#2 /home/plusro/public_html/bootstrap/app.php(13): Slim\Views\Twig->__construct('/home/plusro/pu...', Array)
+#3 /home/plusro/public_html/vendor/pimple/pimple/src/Pimple/Container.php(118): {closure}(Object(Slim\Container))
+#4 /home/plusro/public_html/vendor/slim/slim/Slim/Container.php(123): Pimple\Container->offsetGet('view')
+#5 /home/plusro/public_html/bootstrap/app.php(46): Slim\Container->get('view')
+#6 /home/plusro/public_html/public/index.php(5): require('/home/plusro/pu...')
+#7 {main}
+  thrown in /home/plusro/public_html/vendor/twig/twig/lib/Twig/Loader/Filesystem.php on line 101
+[02-Oct-2019 21:22:34 Europe/Bucharest] PHP Fatal error:  Uncaught Twig_Error_Loader: The "/home/plusro/public_html/bootstrap/../resources/views" directory does not exist ("/home/plusro/public_html/bootstrap/../resources/views"). in /home/plusro/public_html/vendor/twig/twig/lib/Twig/Loader/Filesystem.php:101
+Stack trace:
+#0 /home/plusro/public_html/vendor/slim/twig-view/src/Twig.php(151): Twig_Loader_Filesystem->addPath('/home/plusro/pu...')
+#1 /home/plusro/public_html/vendor/slim/twig-view/src/Twig.php(57): Slim\Views\Twig->createLoader(Array)
+#2 /home/plusro/public_html/bootstrap/app.php(13): Slim\Views\Twig->__construct('/home/plusro/pu...', Array)
+#3 /home/plusro/public_html/vendor/pimple/pimple/src/Pimple/Container.php(118): {closure}(Object(Slim\Container))
+#4 /home/plusro/public_html/vendor/slim/slim/Slim/Container.php(123): Pimple\Container->offsetGet('view')
+#5 /home/plusro/public_html/bootstrap/app.php(46): Slim\Container->get('view')
+#6 /home/plusro/public_html/public/index.php(5): require('/home/plusro/pu...')
+#7 {main}
+  thrown in /home/plusro/public_html/vendor/twig/twig/lib/Twig/Loader/Filesystem.php on line 101
+[02-Oct-2019 21:22:35 Europe/Bucharest] PHP Fatal error:  Uncaught Twig_Error_Loader: The "/home/plusro/public_html/bootstrap/../resources/views" directory does not exist ("/home/plusro/public_html/bootstrap/../resources/views"). in /home/plusro/public_html/vendor/twig/twig/lib/Twig/Loader/Filesystem.php:101
+Stack trace:
+#0 /home/plusro/public_html/vendor/slim/twig-view/src/Twig.php(151): Twig_Loader_Filesystem->addPath('/home/plusro/pu...')
+#1 /home/plusro/public_html/vendor/slim/twig-view/src/Twig.php(57): Slim\Views\Twig->createLoader(Array)
+#2 /home/plusro/public_html/bootstrap/app.php(13): Slim\Views\Twig->__construct('/home/plusro/pu...', Array)
+#3 /home/plusro/public_html/vendor/pimple/pimple/src/Pimple/Container.php(118): {closure}(Object(Slim\Container))
+#4 /home/plusro/public_html/vendor/slim/slim/Slim/Container.php(123): Pimple\Container->offsetGet('view')
+#5 /home/plusro/public_html/bootstrap/app.php(46): Slim\Container->get('view')
+#6 /home/plusro/public_html/public/index.php(5): require('/home/plusro/pu...')
+#7 {main}
+  thrown in /home/plusro/public_html/vendor/twig/twig/lib/Twig/Loader/Filesystem.php on line 101
+[02-Oct-2019 21:23:50 Europe/Bucharest] PHP Fatal error:  Uncaught Twig_Error_Loader: The "/home/plusro/public_html/bootstrap/../resources/views" directory does not exist ("/home/plusro/public_html/bootstrap/../resources/views"). in /home/plusro/public_html/vendor/twig/twig/lib/Twig/Loader/Filesystem.php:101
+Stack trace:
+#0 /home/plusro/public_html/vendor/slim/twig-view/src/Twig.php(151): Twig_Loader_Filesystem->addPath('/home/plusro/pu...')
+#1 /home/plusro/public_html/vendor/slim/twig-view/src/Twig.php(57): Slim\Views\Twig->createLoader(Array)
+#2 /home/plusro/public_html/bootstrap/app.php(13): Slim\Views\Twig->__construct('/home/plusro/pu...', Array)
+#3 /home/plusro/public_html/vendor/pimple/pimple/src/Pimple/Container.php(118): {closure}(Object(Slim\Container))
+#4 /home/plusro/public_html/vendor/slim/slim/Slim/Container.php(123): Pimple\Container->offsetGet('view')
+#5 /home/plusro/public_html/bootstrap/app.php(46): Slim\Container->get('view')
+#6 /home/plusro/public_html/public/index.php(5): require('/home/plusro/pu...')
+#7 {main}
+  thrown in /home/plusro/public_html/vendor/twig/twig/lib/Twig/Loader/Filesystem.php on line 101
+[02-Oct-2019 21:23:51 Europe/Bucharest] PHP Fatal error:  Uncaught Twig_Error_Loader: The "/home/plusro/public_html/bootstrap/../resources/views" directory does not exist ("/home/plusro/public_html/bootstrap/../resources/views"). in /home/plusro/public_html/vendor/twig/twig/lib/Twig/Loader/Filesystem.php:101
+Stack trace:
+#0 /home/plusro/public_html/vendor/slim/twig-view/src/Twig.php(151): Twig_Loader_Filesystem->addPath('/home/plusro/pu...')
+#1 /home/plusro/public_html/vendor/slim/twig-view/src/Twig.php(57): Slim\Views\Twig->createLoader(Array)
+#2 /home/plusro/public_html/bootstrap/app.php(13): Slim\Views\Twig->__construct('/home/plusro/pu...', Array)
+#3 /home/plusro/public_html/vendor/pimple/pimple/src/Pimple/Container.php(118): {closure}(Object(Slim\Container))
+#4 /home/plusro/public_html/vendor/slim/slim/Slim/Container.php(123): Pimple\Container->offsetGet('view')
+#5 /home/plusro/public_html/bootstrap/app.php(46): Slim\Container->get('view')
+#6 /home/plusro/public_html/public/index.php(5): require('/home/plusro/pu...')
+#7 {main}
+  thrown in /home/plusro/public_html/vendor/twig/twig/lib/Twig/Loader/Filesystem.php on line 101
+[02-Oct-2019 21:24:22 Europe/Bucharest] PHP Fatal error:  Uncaught Error: Class 'App\Helpers\EntityTypes' not found in /home/plusro/public_html/app/routes.php:4
+Stack trace:
+#0 /home/plusro/public_html/public/index.php(6): require()
+#1 {main}
+  thrown in /home/plusro/public_html/app/routes.php on line 4
+[02-Oct-2019 21:24:22 Europe/Bucharest] PHP Fatal error:  Uncaught Error: Class 'App\Helpers\EntityTypes' not found in /home/plusro/public_html/app/routes.php:4
+Stack trace:
+#0 /home/plusro/public_html/public/index.php(6): require()
+#1 {main}
+  thrown in /home/plusro/public_html/app/routes.php on line 4
+[02-Oct-2019 21:24:42 Europe/Bucharest] PHP Fatal error:  Uncaught Error: Class 'App\Helpers\EntityTypes' not found in /home/plusro/public_html/app/routes.php:4
+Stack trace:
+#0 /home/plusro/public_html/public/index.php(6): require()
+#1 {main}
+  thrown in /home/plusro/public_html/app/routes.php on line 4
+[02-Oct-2019 21:24:42 Europe/Bucharest] PHP Fatal error:  Uncaught Error: Class 'App\Helpers\EntityTypes' not found in /home/plusro/public_html/app/routes.php:4
+Stack trace:
+#0 /home/plusro/public_html/public/index.php(6): require()
+#1 {main}
+  thrown in /home/plusro/public_html/app/routes.php on line 4
+[02-Oct-2019 21:26:05 Europe/Bucharest] PHP Fatal error:  Uncaught Error: Class 'App\Helpers\EntityTypes' not found in /home/plusro/public_html/app/routes.php:4
+Stack trace:
+#0 /home/plusro/public_html/public/index.php(6): require()
+#1 {main}
+  thrown in /home/plusro/public_html/app/routes.php on line 4
+[02-Oct-2019 21:26:05 Europe/Bucharest] PHP Fatal error:  Uncaught Error: Class 'App\Helpers\EntityTypes' not found in /home/plusro/public_html/app/routes.php:4
+Stack trace:
+#0 /home/plusro/public_html/public/index.php(6): require()
+#1 {main}
+  thrown in /home/plusro/public_html/app/routes.php on line 4
+[02-Oct-2019 21:28:16 Europe/Bucharest] PHP Fatal error:  Uncaught Error: Class 'App\Helpers\EntityTypes' not found in /home/plusro/public_html/app/routes.php:4
+Stack trace:
+#0 /home/plusro/public_html/public/index.php(6): require()
+#1 {main}
+  thrown in /home/plusro/public_html/app/routes.php on line 4
+[02-Oct-2019 21:28:16 Europe/Bucharest] PHP Fatal error:  Uncaught Error: Class 'App\Helpers\EntityTypes' not found in /home/plusro/public_html/app/routes.php:4
+Stack trace:
+#0 /home/plusro/public_html/public/index.php(6): require()
+#1 {main}
+  thrown in /home/plusro/public_html/app/routes.php on line 4
+[02-Oct-2019 21:30:48 Europe/Bucharest] PHP Fatal error:  Uncaught Error: Class 'App\Helpers\EntityTypes' not found in /home/plusro/public_html/app/routes.php:4
+Stack trace:
+#0 /home/plusro/public_html/public/index.php(6): require()
+#1 {main}
+  thrown in /home/plusro/public_html/app/routes.php on line 4
+[02-Oct-2019 21:30:48 Europe/Bucharest] PHP Fatal error:  Uncaught Error: Class 'App\Helpers\EntityTypes' not found in /home/plusro/public_html/app/routes.php:4
+Stack trace:
+#0 /home/plusro/public_html/public/index.php(6): require()
+#1 {main}
+  thrown in /home/plusro/public_html/app/routes.php on line 4
+[02-Oct-2019 21:35:24 Europe/Bucharest] PHP Fatal error:  Uncaught Error: Class 'App\Helpers\EntityTypes' not found in /home/plusro/public_html/app/routes.php:4
+Stack trace:
+#0 /home/plusro/public_html/public/index.php(6): require()
+#1 {main}
+  thrown in /home/plusro/public_html/app/routes.php on line 4
+[02-Oct-2019 21:35:25 Europe/Bucharest] PHP Fatal error:  Uncaught Error: Class 'App\Helpers\EntityTypes' not found in /home/plusro/public_html/app/routes.php:4
+Stack trace:
+#0 /home/plusro/public_html/public/index.php(6): require()
+#1 {main}
+  thrown in /home/plusro/public_html/app/routes.php on line 4
+[02-Oct-2019 21:35:27 Europe/Bucharest] PHP Fatal error:  Uncaught Error: Class 'App\Helpers\EntityTypes' not found in /home/plusro/public_html/app/routes.php:4
+Stack trace:
+#0 /home/plusro/public_html/public/index.php(6): require()
+#1 {main}
+  thrown in /home/plusro/public_html/app/routes.php on line 4
+[02-Oct-2019 21:35:27 Europe/Bucharest] PHP Fatal error:  Uncaught Error: Class 'App\Helpers\EntityTypes' not found in /home/plusro/public_html/app/routes.php:4
+Stack trace:
+#0 /home/plusro/public_html/public/index.php(6): require()
+#1 {main}
+  thrown in /home/plusro/public_html/app/routes.php on line 4
+[02-Oct-2019 21:36:48 Europe/Bucharest] PHP Fatal error:  Uncaught Error: Class 'App\Helpers\EntityTypes' not found in /home/plusro/public_html/app/routes.php:4
+Stack trace:
+#0 /home/plusro/public_html/public/index.php(6): require()
+#1 {main}
+  thrown in /home/plusro/public_html/app/routes.php on line 4
+[02-Oct-2019 21:37:03 Europe/Bucharest] PHP Fatal error:  Uncaught Error: Class 'App\Helpers\EntityTypes' not found in /home/plusro/public_html/app/routes.php:4
+Stack trace:
+#0 /home/plusro/public_html/public/index.php(6): require()
+#1 {main}
+  thrown in /home/plusro/public_html/app/routes.php on line 4
+[02-Oct-2019 21:37:03 Europe/Bucharest] PHP Fatal error:  Uncaught Error: Class 'App\Helpers\EntityTypes' not found in /home/plusro/public_html/app/routes.php:4
+Stack trace:
+#0 /home/plusro/public_html/public/index.php(6): require()
+#1 {main}
+  thrown in /home/plusro/public_html/app/routes.php on line 4
+[02-Oct-2019 21:38:54 Europe/Bucharest] PHP Fatal error:  Uncaught Error: Class 'App\Helpers\EntityTypes' not found in /home/plusro/public_html/app/routes.php:4
+Stack trace:
+#0 /home/plusro/public_html/public/index.php(6): require()
+#1 {main}
+  thrown in /home/plusro/public_html/app/routes.php on line 4
+[02-Oct-2019 21:38:54 Europe/Bucharest] PHP Fatal error:  Uncaught Error: Class 'App\Helpers\EntityTypes' not found in /home/plusro/public_html/app/routes.php:4
+Stack trace:
+#0 /home/plusro/public_html/public/index.php(6): require()
+#1 {main}
+  thrown in /home/plusro/public_html/app/routes.php on line 4

@@ -1,0 +1,140 @@
+.glyphicon-ok:before {
+    content: "\f00c";
+}
+
+.glyphicon-remove:before {
+    content: "\f00d";
+}
+
+.glyphicon {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.editable, a.editable {
+    text-decoration: none !important;
+    color: #428bca !important;
+    border-bottom: dashed 1px #428bca !important;
+}
+
+.editable:before, .img-editable span:before {
+    font-family: 'Glyphicons Halflings';
+    content:"\280f";
+    color: red;
+    padding: 10px;
+    text-decoration: none;
+}
+
+.editable, a.editable-click, a.editable-click:hover, .img-editable {
+    cursor: pointer;
+    border: none;
+}
+
+.editable-click:hover, .img-editable:hover {
+    border: #ffa500 1px dashed !important;
+}
+
+.img-editable {
+    position: absolute !important;
+    z-index: 999;
+}
+
+.img-editable span {
+    display: inline-block;
+    padding: 5px 10px 5px 0;
+    color: #ffffff;
+}
+
+editableform .form-control {
+    width: 100%;
+}
+
+.editableform .control-group {
+    margin-bottom: 0;
+    white-space: nowrap;
+    line-height: 20px;
+    width: 80%;
+}
+
+.editable-input {
+    width: 100%;
+}
+
+.editableform {
+    margin: 0;
+}
+
+
+.add-image span, .add-client span {
+    color: #808080;
+}
+
+.img-delete, .client-delete {
+    position: absolute !important;
+    top: 10px;
+    right: 10px;
+    z-index: 999;
+    font-size: 22px;
+    color: #ff0000;
+    background-color: #ffffff;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.img-delete:hover, .client-delete:hover {
+    border: #ffa500 1px dashed;
+}
+
+.img-promote {
+    position: absolute !important;
+    bottom: 10px;
+    right: 10px;
+    z-index: 999;
+    font-size: 22px;
+    color: #dedede;
+    background-color: #ffffff;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.img-promote.promoted {
+    color: #00ff00;
+}
+
+.img-promote:hover {
+    border: #ffa500 1px dashed;
+}
+
+.editable-container.popover {
+    width: 550px;
+}
+
+.editableform .form-control {
+    width: 100%;
+}
+
+.editableform .control-group {
+    margin-bottom: 0;
+    white-space: nowrap;
+    line-height: 20px;
+    width: 80%;
+}
+
+.editable-input {
+    width: 100%;
+}
+
+.editableform {
+    margin: 0;
+}
+
+@media (min-width: 768px) {
+    .form-inline .form-group {
+        display: block;
+        margin-bottom: 0;
+    }
+}

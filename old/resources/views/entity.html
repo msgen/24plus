@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}{{route}}{% endblock %}
+
+{% block pluginsCss %}
+<link
+  href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css"
+  rel="stylesheet" />
+<link href="/assets/css/admin.css" rel="stylesheet">
+{% endblock %}
+
+{% block pluginsJs %}
+<script
+  src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+<script src="/assets/js/modules/editable-models.js"></script>
+<script src="/assets/js/bootbox.min.js"></script>
+<script src="/assets/js/modules/util.js"></script>
+<script src="/assets/js/modules/image.js"></script>
+<script src="/assets/js/modules/client.js"></script>
+<script src="/assets/js/admin.js"></script>
+{% endblock %}
+
+{% block content %}
+<section id="gallery">
+    <div class="container">
+
+      {% if userIsAuthenticated %}
+        <div class="position-relative mb-8">
+          <div class="img-editable add-image">
+            <span data-entity-type="{{entity.type}}">Adaugati imagine</span>
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="section-title justify-content-center pt-2  mb-2 mb-md-4 wow fadeInUp" style="visibility: visible; animation-name: fadeInUp;">
+        <span class="shape shape-left bg-info"></span>
+        <h2 class="text-danger">{{entity.title}}</h2>
+        <span class="shape shape-right bg-info"></span>
+      </div>
+
+      <h6 class="mb-4">
+        {% if userIsAuthenticated %}
+          <a href="#" id="description" data-type="textarea" data-pk="{{entity.id}}" data-url="/edit-entity"
+            data-placeholder="{{entity.description}}" data-title="Editati" class="editable editable-pre-wrapped editable-click"
+            data-original-title="" title="">{{entity.description}}</a>
+        {% else %}
+          {{entity.description | raw}}
+        {% endif %}
+      </h6>
+
+      <div id="gallery-grid">
+        <div class="row grid wow fadeInUp">
+          {% for image in entity.images %}
+            <div class="col-md-4 col-lg-3 col-xs-12 element-item nature">
+              <div class="media media-hoverable justify-content-center">
+                <div class="position-relative w-100">
+                  {% if userIsAuthenticated %}
+                    {% set dataAttributes = {'data-pk':image.id, 'data-input-id':image.guid} %}
+                    {% set promoted = image.promoted ? true : false %}
+                    {{ CreateDeleteImageHelper( [], dataAttributes) | raw }}
+                    {{ CreateInPlaceEditorForChangingImage( [], dataAttributes) | raw }}
+                    {{ CreatePromoteToHomepageImageHelper( [], dataAttributes, promoted) | raw }}
+                  {% endif %}
+                  <img class="media-img w-100" id="g-{{image.guid}}" data-src="assets/img/{{image.bigUrl}}"
+                    src="assets/img/{{image.smallUrl}}" alt="{{image.smallUrl}} - {{entity.title}}" />
+                  <a class="media-img-overlay" data-fancybox="gallery" href="assets/img/{{image.bigUrl}}">
+                    <div class="btn btn-squre">
+                      <i class="fa fa-search-plus"></i>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
