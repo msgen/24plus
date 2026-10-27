@@ -41,7 +41,8 @@ Shared cPanel hosting without Node cannot run this app.
 - `public/admin.js` shrinks photos in the browser and uploads them one by one (serverless body limit).
 - `src/lib/content.ts` read side for the public pages.
 - `src/pages/admin/*` the CMS screens. `src/pages/api/quote.ts` the public form endpoint.
-- `scripts/import.mjs` one-off import from `../old` (backup SQL + photos); `scripts/copy.ro.json` rewritten service text.
+- `src/data/*.json` the seed content (services, clients, photo list) loaded on first run; it came from the old site's database backup. `scripts/user-add.mjs` creates an admin user from the command line.
+- The old PHP site, its database backup and original photos were removed from the repo after the migration; they stay in git history (last commit containing them: `ff22af2`, e.g. `git show ff22af2:old/database/backup/entity.sql`).
 
 ## Known limits / next steps
 - Read-modify-write is serialised per process only. Fine for a few editors; move to a real database if that changes (only `store.ts` needs to change).
