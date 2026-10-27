@@ -47,11 +47,11 @@ export function login(email: string, password: string): User | null {
   return u && ok ? u : null;
 }
 
-export function startSession(cookies: AstroCookies, user: User) {
+export function startSession(cookies: AstroCookies, user: User, secure: boolean) {
   const exp = Math.floor(Date.now() / 1000) + MAX_AGE;
   const payload = `${user.id}.${exp}`;
   cookies.set(COOKIE, `${payload}.${sign(payload)}`, {
-    httpOnly: true, sameSite: 'strict', secure: import.meta.env.PROD && process.env.INSECURE_COOKIES !== '1', path: '/', maxAge: MAX_AGE,
+    httpOnly: true, sameSite: 'strict', secure, path: '/', maxAge: MAX_AGE,
   });
 }
 export const endSession = (cookies: AstroCookies) => cookies.delete(COOKIE, { path: '/' });

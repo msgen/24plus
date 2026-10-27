@@ -6,7 +6,7 @@ Astro 7 (server mode, Node) + Tailwind 4. Romanian only. No external CMS or data
 ```
 npm install
 npm run user:add -- you@24plus.ro "Numele tău" "o-parola-de-minim-10-caractere"
-INSECURE_COOKIES=1 npm run dev          # site: http://localhost:4321   admin: /admin
+npm run dev                             # site: http://localhost:4321   admin: /admin
 ```
 
 ## What the admin (`/admin`) can do
@@ -31,7 +31,7 @@ docker run -d --name 24plus --restart unless-stopped -p 4321:4321 -v 24plus-data
   -e SITE_URL=https://24plus.ro --env-file .env 24plus
 docker exec -it 24plus node scripts/user-add.mjs you@24plus.ro "Nume" "parola-lunga"
 ```
-**Without Docker:** `npm ci && npm run build`, then run `node dist/server/entry.mjs` under pm2/systemd with the env vars from `.env.example`, behind nginx/Caddy for HTTPS (the admin cookie is `Secure`, so HTTPS is required in production).
+**Without Docker:** `npm ci && npm run build`, then run `node dist/server/entry.mjs` under pm2/systemd with the env vars from `.env.example`, behind nginx/Caddy for HTTPS (the proxy must send `X-Forwarded-Proto: https` so the login cookie is marked Secure).
 
 **Backups:** copy the whole `DATA_DIR` (JSON + `uploads/`). That is the entire state of the site. Restore = put it back.
 
