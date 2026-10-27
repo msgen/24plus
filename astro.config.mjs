@@ -13,8 +13,9 @@ redirects['/revista'] = '/';
 export default defineConfig({
   site: 'https://24plus.ro',
   output: 'server',
-  // Netlify sets NETLIFY=true during builds; everywhere else (local, Docker, VPS) use the plain Node server.
-  adapter: process.env.NETLIFY ? netlify() : node({ mode: 'standalone' }),
+  // Netlify builds (ADAPTER=netlify in netlify.toml, or NETLIFY=true) use the Netlify adapter;
+  // everywhere else (local, Docker, VPS) the plain Node server.
+  adapter: process.env.ADAPTER === 'netlify' || process.env.NETLIFY ? netlify() : node({ mode: 'standalone' }),
   // Origin check is done in src/middleware.ts (host-only compare); proxies often hide the original protocol.
   security: { checkOrigin: false },
   redirects,
