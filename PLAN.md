@@ -1,5 +1,9 @@
 # 24 Plus Media: New Website Plan
 
+> **Status (2026-10-27):** the site is built; see `README.md` for how it works and `DEPLOY-NETLIFY.md` to deploy it.
+> Decisions that changed since this plan was written: the CMS is our own (built in, no Sanity), the site runs as a Node/serverless app on Netlify (not static), and the old PHP site was removed from the repo (it stays in git history, commit `ff22af2`). The rest below is the original planning document.
+
+
 Based on a review of `old/` in `msgen/24plus` (read 2026-10-26).
 
 ## 1. What the old site is

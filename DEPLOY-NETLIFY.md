@@ -12,7 +12,7 @@ Locally, in Docker or on a VPS the same code stores everything in `DATA_DIR` ins
 
 ## 1. Create the site
 1. app.netlify.com → *Add new project → Import an existing project* → GitHub → `msgen/24plus`.
-2. **Base directory: `new`**. Build command `npm run build`, publish directory `dist` (the included `netlify.toml` sets these).
+2. Leave *Base directory* empty (the site is at the repo root). Build command `npm run build`, publish directory `dist` (the included `netlify.toml` sets these).
 3. *Branch to deploy*: the branch that holds the code (merge `claude/awesome-bell-srewm5` into `main` first, or pick that branch).
 4. Add the environment variables below **before** the first deploy (or redeploy after adding them).
 

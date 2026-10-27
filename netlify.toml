@@ -1,4 +1,4 @@
-# Netlify build settings (set "Base directory" to `new` in the site settings).
+# Netlify build settings. The site is at the repo root, so no base directory is needed.
 [build]
   command = "npm run build"
   publish = "dist"
