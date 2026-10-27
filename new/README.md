@@ -22,9 +22,9 @@ npm run dev                             # site: http://localhost:4321   admin: /
 Changes appear on the site immediately (no rebuild). *Setări → Descarcă backup* exports the data as JSON.
 
 ## Deploy
-**Vercel (chosen): see [DEPLOY-VERCEL.md](DEPLOY-VERCEL.md).** Data goes to Upstash Redis, photos to Vercel Blob.
+**Netlify (chosen): see [DEPLOY-NETLIFY.md](DEPLOY-NETLIFY.md).** Data and photos go to Netlify Blobs (built in, nothing to set up).
 
-Any Node 22.22+ host also works (VPS, Docker): without the Redis/Blob variables everything is stored in `DATA_DIR`.
+Any Node 22.22+ host also works (VPS, Docker): without `STORAGE=netlify` everything is stored in `DATA_DIR`.
 ```
 docker build -t 24plus .
 docker run -d --name 24plus --restart unless-stopped -p 4321:4321 -v 24plus-data:/data \
@@ -34,10 +34,10 @@ docker exec -it 24plus node scripts/user-add.mjs you@24plus.ro "Nume" "parola-lu
 Shared cPanel hosting without Node cannot run this app.
 
 ## Layout
-- `src/lib/store.ts` async store: Upstash Redis when configured, JSON files otherwise. First run seeds from `src/data/*.json`.
+- `src/lib/store.ts` async store: Netlify Blobs on Netlify, JSON files otherwise. First run seeds from `src/data/*.json`.
 - `src/middleware.ts` loads one content snapshot per request (`snapshot-context.ts`) so templates read content synchronously; also the cross-site POST check.
 - `src/lib/auth.ts` scrypt passwords, HMAC-signed httpOnly/SameSite=Strict cookie, login/quote rate limits. `security.checkOrigin` rejects cross-site form POSTs.
-- `src/lib/images.ts` decodes + re-encodes every upload with sharp (strips metadata, rejects non-images, 15 MB cap) and stores to Vercel Blob or `DATA_DIR/uploads`.
+- `src/lib/images.ts` decodes + re-encodes every upload with sharp (strips metadata, rejects non-images, 15 MB cap) and stores to Netlify Blobs or `DATA_DIR/uploads` (served by `/uploads/*`).
 - `public/admin.js` shrinks photos in the browser and uploads them one by one (serverless body limit).
 - `src/lib/content.ts` read side for the public pages.
 - `src/pages/admin/*` the CMS screens. `src/pages/api/quote.ts` the public form endpoint.

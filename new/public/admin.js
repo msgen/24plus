@@ -1,4 +1,4 @@
-// Photo upload helper. Serverless hosts cap a request at ~4.5 MB, and phone photos are bigger,
+// Photo upload helper. Serverless hosts cap a request at ~6 MB, and phone photos are bigger,
 // so shrink each photo in the browser (max 2000 px) and send them one request at a time.
 (function () {
   function shrink(file) {

@@ -1,0 +1,7 @@
+# Netlify build settings (set "Base directory" to `new` in the site settings).
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"

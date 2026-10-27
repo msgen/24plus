@@ -2,11 +2,11 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { AstroCookies } from 'astro';
-import { DATA_DIR, read, update, newId, hit, onVercel, usingRedis, type User } from './store';
+import { DATA_DIR, read, update, newId, hit, usingNetlify, type User } from './store';
 
 const secret = (() => {
   if (process.env.SESSION_SECRET) return process.env.SESSION_SECRET;
-  if (onVercel || process.env.NODE_ENV === 'production' && usingRedis) throw new Error('SESSION_SECRET must be set.');
+  if (usingNetlify) throw new Error('SESSION_SECRET must be set (Netlify has no persistent disk).');
   const f = path.join(DATA_DIR, '.secret'); // local/VPS convenience: generated once
   if (!fs.existsSync(f)) fs.writeFileSync(f, crypto.randomBytes(32).toString('hex'), { mode: 0o600 });
   return fs.readFileSync(f, 'utf8');

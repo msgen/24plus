@@ -1,5 +1,5 @@
 // Storage for the CMS: one JSON document per collection.
-//  - On Vercel (KV_REST_API_URL / UPSTASH_REDIS_REST_URL set): Upstash Redis, because serverless functions have no persistent disk.
+//  - On Netlify: Netlify Blobs (serverless functions have no persistent disk).
 //  - Otherwise (local dev, Docker, VPS): JSON files in DATA_DIR.
 // All access is async; callers do not know which backend is active.
 import fs from 'node:fs';
@@ -8,7 +8,7 @@ import categoriesSeed from '../data/categories.json';
 import servicesSeed from '../data/services.json';
 import clientsSeed from '../data/clients.json';
 import projectsSeed from '../data/projects.json';
-import { Redis } from '@upstash/redis';
+import { getStore } from '@netlify/blobs';
 
 export type Category = { slug: string; title: string; blurb: string };
 export type Service = { slug: string; category: string; title: string; order: number; excerpt: string; paragraphs: string[]; hidden: boolean; needsReview?: boolean };
@@ -47,26 +47,29 @@ const defaults = {
 export type Collections = typeof defaults;
 export type Name = keyof Collections;
 
-// ---- backends -------------------------------------------------------------------------------
-const redisUrl = process.env.KV_REST_API_URL ?? process.env.UPSTASH_REDIS_REST_URL;
-const redisToken = process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN;
-export const usingRedis = !!(redisUrl && redisToken);
-export const onVercel = !!process.env.VERCEL;
+// ---- backend selection ----------------------------------------------------------------------
+// STORAGE=netlify|file forces a backend; otherwise Netlify is detected from its runtime variables.
+export const usingNetlify = process.env.STORAGE
+  ? process.env.STORAGE === 'netlify'
+  : !!(process.env.NETLIFY || process.env.NETLIFY_BLOBS_CONTEXT);
 
 export const DATA_DIR = path.resolve(process.env.DATA_DIR ?? 'data');
 export const UPLOAD_DIR = path.join(DATA_DIR, 'uploads');
-if (!usingRedis) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+if (!usingNetlify) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
-const redis = usingRedis ? new Redis({ url: redisUrl!, token: redisToken! }) : null;
-const key = (n: string) => `24plus:${n}`;
+// Strong consistency: an edit in the admin is visible on the site immediately.
+const blobs = (name: string) => getStore({ name, consistency: 'strong' });
+const data = () => blobs('cms-data');
+const PUBLIC = ['categories', 'services', 'clients', 'projects', 'testimonials', 'settings'] as const;
+
 const file = (n: string) => path.join(DATA_DIR, `${n}.json`);
 const fileCache = new Map<string, { mtime: number; value: unknown }>();
 
 async function get<K extends Name>(name: K): Promise<Collections[K]> {
-  if (redis) {
-    const v = await redis.get<Collections[K]>(key(name));
+  if (usingNetlify) {
+    const v = (await data().get(name, { type: 'json' })) as Collections[K] | null;
     if (v !== null && v !== undefined) return v;
-    await redis.set(key(name), defaults[name], { nx: true }); // first run: seed from the import
+    await data().setJSON(name, defaults[name]); // first run: seed from the import
     return structuredClone(defaults[name]);
   }
   const f = file(name);
@@ -80,7 +83,12 @@ async function get<K extends Name>(name: K): Promise<Collections[K]> {
 }
 
 async function put<K extends Name>(name: K, value: Collections[K]) {
-  if (redis) { await redis.set(key(name), value); return; }
+  if (usingNetlify) {
+    await data().setJSON(name, value);
+    // The public pages read one combined document (1 request per page view); keep it in step with the collections.
+    if ((PUBLIC as readonly string[]).includes(name)) await data().setJSON('snapshot', await buildSnapshot(name, value));
+    return;
+  }
   const f = file(name);
   const tmp = `${f}.${process.pid}.tmp`;
   fs.writeFileSync(tmp, JSON.stringify(value, null, 2));
@@ -102,35 +110,59 @@ export function update<K extends Name>(name: K, fn: (v: Collections[K]) => Colle
   return p;
 }
 
-/** Everything the public pages need, in one round trip (Redis MGET). */
-export type Snapshot = Pick<Collections, 'categories' | 'services' | 'clients' | 'projects' | 'testimonials' | 'settings'>;
-export async function snapshot(): Promise<Snapshot> {
-  if (redis) {
-    const names = ['categories', 'services', 'clients', 'projects', 'testimonials', 'settings'] as const;
-    const vals = await redis.mget<unknown[]>(...names.map(key));
-    const out: Record<string, unknown> = {};
-    for (let i = 0; i < names.length; i++) out[names[i]] = vals[i] ?? (await get(names[i]));
-    return out as Snapshot;
-  }
-  const [categories, services, clients, projects, testimonials, settings] = await Promise.all(
-    (['categories', 'services', 'clients', 'projects', 'testimonials', 'settings'] as const).map((n) => get(n)));
-  return { categories, services, clients, projects, testimonials, settings } as Snapshot;
+/** Everything the public pages need. */
+export type Snapshot = Pick<Collections, (typeof PUBLIC)[number]>;
+
+async function buildSnapshot(override?: Name, value?: unknown): Promise<Snapshot> {
+  const out: Record<string, unknown> = {};
+  await Promise.all(PUBLIC.map(async (n) => { out[n] = n === override ? value : await get(n); }));
+  return out as Snapshot;
 }
 
-/** Sliding-window counter for rate limits. Returns hits within the window, including this one. */
+export async function snapshot(): Promise<Snapshot> {
+  if (usingNetlify) {
+    const s = (await data().get('snapshot', { type: 'json' })) as Snapshot | null;
+    if (s) return s;
+    const built = await buildSnapshot();
+    await data().setJSON('snapshot', built);
+    return built;
+  }
+  return buildSnapshot();
+}
+
+/** Counts events for rate limiting; returns hits within the window, including this one. */
 const memHits = new Map<string, number[]>();
 export async function hit(bucket: string, seconds: number): Promise<number> {
-  if (redis) {
-    const k = `24plus:rl:${bucket}`;
-    const n = await redis.incr(k);
-    if (n === 1) await redis.expire(k, seconds);
-    return n;
-  }
   const now = Date.now();
-  const list = (memHits.get(bucket) ?? []).filter((t) => now - t < seconds * 1000);
+  const keep = (l: number[]) => l.filter((t) => now - t < seconds * 1000);
+  if (usingNetlify) {
+    const s = blobs('cms-ratelimit');
+    const k = bucket.replace(/[^\w.:-]/g, '_').slice(0, 120);
+    const list = keep(((await s.get(k, { type: 'json' })) as number[] | null) ?? []);
+    list.push(now);
+    await s.setJSON(k, list);
+    return list.length;
+  }
+  const list = keep(memHits.get(bucket) ?? []);
   list.push(now);
   memHits.set(bucket, list);
   return list.length;
+}
+
+// ---- uploaded images ------------------------------------------------------------------------
+// Netlify: stored in a blob store and served by /uploads/*. Local/VPS: files in DATA_DIR/uploads.
+export async function putImage(name: string, buf: Buffer) {
+  if (usingNetlify) { await blobs('cms-images').set(name, buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer); return; }
+  fs.writeFileSync(path.join(UPLOAD_DIR, name), buf);
+}
+export async function getImage(name: string): Promise<ArrayBuffer | Buffer | null> {
+  if (usingNetlify) return (await blobs('cms-images').get(name, { type: 'arrayBuffer' })) ?? null;
+  const f = path.join(UPLOAD_DIR, name);
+  return fs.existsSync(f) ? fs.readFileSync(f) : null;
+}
+export async function deleteImage(name: string) {
+  if (usingNetlify) { await blobs('cms-images').delete(name).catch(() => {}); return; }
+  fs.rmSync(path.join(UPLOAD_DIR, name), { force: true });
 }
 
 export const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);

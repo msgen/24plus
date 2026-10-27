@@ -1,6 +1,6 @@
 import { defineConfig } from 'astro/config';
 import node from '@astrojs/node';
-import vercel from '@astrojs/vercel';
+import netlify from '@astrojs/netlify';
 import tailwindcss from '@tailwindcss/vite';
 import services from './src/data/services.json' with { type: 'json' };
 
@@ -13,8 +13,8 @@ redirects['/revista'] = '/';
 export default defineConfig({
   site: 'https://24plus.ro',
   output: 'server',
-  // Vercel sets VERCEL=1 during builds; everywhere else (local, Docker, VPS) use the plain Node server.
-  adapter: process.env.VERCEL ? vercel() : node({ mode: 'standalone' }),
+  // Netlify sets NETLIFY=true during builds; everywhere else (local, Docker, VPS) use the plain Node server.
+  adapter: process.env.NETLIFY ? netlify() : node({ mode: 'standalone' }),
   // Origin check is done in src/middleware.ts (host-only compare); proxies often hide the original protocol.
   security: { checkOrigin: false },
   redirects,
