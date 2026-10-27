@@ -1,0 +1,20 @@
+import { defineMiddleware } from 'astro:middleware';
+import { currentUser } from './lib/auth';
+
+export const onRequest = defineMiddleware(async (ctx, next) => {
+  const path = ctx.url.pathname;
+  if (path.startsWith('/admin')) {
+    const user = currentUser(ctx.cookies);
+    ctx.locals.user = user;
+    if (!user && path !== '/admin/login') return ctx.redirect('/admin/login');
+  }
+  const res = await next();
+  if (path.startsWith('/admin')) {
+    res.headers.set('Cache-Control', 'no-store');
+    res.headers.set('X-Robots-Tag', 'noindex');
+  }
+  res.headers.set('X-Content-Type-Options', 'nosniff');
+  res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.headers.set('X-Frame-Options', 'SAMEORIGIN');
+  return res;
+});

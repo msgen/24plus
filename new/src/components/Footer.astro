@@ -1,5 +1,7 @@
 ---
-import { categories, site } from '../lib/content';
+import { getCategories, getSite } from '../lib/content';
+const categories = getCategories();
+const site = getSite();
 ---
 <footer class="mt-24 bg-charcoal text-white/80">
   <div class="container-x grid gap-10 py-14 md:grid-cols-4">

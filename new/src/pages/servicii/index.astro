@@ -1,7 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ServiceCard from '../../components/ServiceCard.astro';
-import { categories, servicesIn } from '../../lib/content';
+import { getCategories, servicesIn } from '../../lib/content';
+const categories = getCategories();
 ---
 <Base title="Servicii" description="Toate serviciile 24 Plus Media: producție publicitară, printuri mari, print digital și obiecte promoționale.">
   <div class="container-x pt-12">

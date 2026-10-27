@@ -29,3 +29,11 @@ h1, h2, h3 { @apply font-extrabold tracking-tight text-balance; }
 .eyebrow { @apply text-xs font-bold uppercase tracking-[0.18em] text-brand-dark; }
 .eyebrow-light { @apply text-brand; }
 }
+
+@layer components {
+  .field { @apply mt-1 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm font-normal; }
+  .label { @apply block text-sm font-semibold; }
+  .card { @apply rounded-2xl bg-white p-5 ring-1 ring-line; }
+  .btn-sm { @apply px-4 py-2 text-xs; }
+  .btn-danger { @apply bg-red-600 text-white hover:bg-red-700; }
+}

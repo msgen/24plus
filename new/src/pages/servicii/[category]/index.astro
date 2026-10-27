@@ -1,9 +1,9 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import ServiceCard from '../../../components/ServiceCard.astro';
-import { categories, categoryBySlug, servicesIn } from '../../../lib/content';
-export function getStaticPaths() { return categories.map((c) => ({ params: { category: c.slug } })); }
-const c = categoryBySlug(Astro.params.category!);
+import { getCategories, servicesIn } from '../../../lib/content';
+const c = getCategories().find((x) => x.slug === Astro.params.category);
+if (!c) return Astro.rewrite('/404');
 ---
 <Base title={c.title} description={c.blurb}>
   <div class="container-x pt-12">

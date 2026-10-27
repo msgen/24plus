@@ -1,9 +1,9 @@
 ---
-import { services, site } from '../lib/content';
+import { getServices } from '../lib/content';
+const services = getServices();
 const { service = '' } = Astro.props as { service?: string };
-const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
 ---
-<form id="quote" class="space-y-4 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-line" data-endpoint={endpoint} data-mailto={site.email} novalidate>
+<form id="quote" class="space-y-4 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-line" novalidate>
   <div class="grid gap-4 sm:grid-cols-2">
     <label class="block text-sm font-semibold">Nume
       <input name="nume" required autocomplete="name" class="mt-1 w-full rounded-lg border border-line px-3 py-2.5 font-normal" />
@@ -35,22 +35,14 @@ const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!form.reportValidity()) return;
-    const data = Object.fromEntries(new FormData(form));
-    if (data.website) return; // honeypot
-    const { endpoint, mailto } = form.dataset;
-    if (!endpoint) {
-      const body = `Nume: ${data.nume}\nTelefon: ${data.telefon}\nE-mail: ${data.email}\nServiciu: ${data.serviciu}\n\n${data.mesaj}`;
-      location.href = `mailto:${mailto}?subject=${encodeURIComponent('Cerere ofertă 24plus.ro')}&body=${encodeURIComponent(body)}`;
-      return;
-    }
     status.textContent = 'Se trimite...';
     try {
-      const r = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(data) });
+      const r = await fetch('/api/quote', { method: 'POST', body: new FormData(form) });
       if (!r.ok) throw new Error();
       form.reset();
       status.textContent = 'Mulțumim! Te contactăm în cel mai scurt timp.';
     } catch {
-      status.textContent = 'Nu am putut trimite cererea. Sună-ne la 0745 537 715.';
+      status.textContent = 'Nu am putut trimite cererea. Te rugăm să ne suni.';
     }
   });
 </script>

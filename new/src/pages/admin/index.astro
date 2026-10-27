@@ -1,0 +1,32 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import { read } from '../../lib/store';
+const leads = read('leads');
+const fresh = leads.filter((l) => l.status === 'nou');
+const stats = [
+  ['Cereri noi', fresh.length, '/admin/cereri'], ['Servicii publicate', read('services').filter((s) => !s.hidden).length, '/admin/servicii'],
+  ['Fotografii', read('projects').length, '/admin/portofoliu'], ['Clienți', read('clients').length, '/admin/clienti'],
+];
+const draft = read('services').filter((s) => s.hidden);
+---
+<Admin title="Panou">
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    {stats.map(([label, n, href]) => <a href={href as string} class="card hover:shadow-md"><p class="text-3xl font-extrabold">{n}</p><p class="text-sm text-mute">{label}</p></a>)}
+  </div>
+  <section class="mt-8">
+    <h2 class="text-lg">Cereri noi</h2>
+    {fresh.length === 0 ? <p class="mt-2 text-sm text-mute">Nicio cerere nouă.</p> : (
+      <ul class="mt-3 space-y-3">
+        {fresh.slice(0, 5).map((l) => (
+          <li class="card"><p class="font-bold">{l.nume} · <a class="text-brand-dark" href={`tel:${l.telefon}`}>{l.telefon}</a></p><p class="text-sm text-mute">{l.serviciu || 'General'} · {new Date(l.createdAt).toLocaleString('ro-RO')}</p><p class="mt-2 whitespace-pre-line text-sm">{l.mesaj}</p></li>
+        ))}
+      </ul>
+    )}
+  </section>
+  {draft.length > 0 && (
+    <section class="mt-8">
+      <h2 class="text-lg">Servicii nepublicate ({draft.length})</h2>
+      <p class="mt-1 text-sm text-mute">Nu au text și nu apar pe site: {draft.map((s) => s.title).join(', ')}.</p>
+    </section>
+  )}
+</Admin>

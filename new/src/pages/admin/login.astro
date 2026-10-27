@@ -1,0 +1,25 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import { login, startSession, tooMany, currentUser } from '../../lib/auth';
+import { msg } from '../../lib/admin';
+import { read } from '../../lib/store';
+
+if (currentUser(Astro.cookies)) return Astro.redirect('/admin');
+const noUsers = read('users').length === 0;
+if (Astro.request.method === 'POST') {
+  if (tooMany(`login:${Astro.clientAddress}`, 8, 15 * 60_000)) return Astro.redirect(msg('/admin/login', 'Prea multe încercări. Încearcă peste 15 minute.', 'err'));
+  const f = await Astro.request.formData();
+  const user = login(String(f.get('email') ?? ''), String(f.get('password') ?? ''));
+  if (!user) return Astro.redirect(msg('/admin/login', 'E-mail sau parolă greșite.', 'err'));
+  startSession(Astro.cookies, user);
+  return Astro.redirect('/admin');
+}
+---
+<Admin title="Autentificare">
+  <form method="post" class="card max-w-sm space-y-4">
+    <label class="label">E-mail<input class="field" name="email" type="email" autocomplete="username" required autofocus /></label>
+    <label class="label">Parolă<input class="field" name="password" type="password" autocomplete="current-password" required /></label>
+    <button class="btn btn-primary w-full">Intră</button>
+  </form>
+  {noUsers && <p class="mt-4 max-w-sm text-sm text-mute">Nu există niciun utilizator. Creează unul cu <code>npm run user:add</code> pe server.</p>}
+</Admin>

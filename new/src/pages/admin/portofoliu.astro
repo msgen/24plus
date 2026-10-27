@@ -1,0 +1,81 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import { read, update, newId, type Project } from '../../lib/store';
+import { saveImage, removeUpload } from '../../lib/images';
+import { str, bool, files, msg } from '../../lib/admin';
+
+const filter = Astro.url.searchParams.get('service') ?? '';
+const back = filter ? `/admin/portofoliu?service=${encodeURIComponent(filter)}` : '/admin/portofoliu';
+const services = read('services').sort((a, b) => a.order - b.order);
+
+if (Astro.request.method === 'POST') {
+  const f = await Astro.request.formData();
+  const action = str(f, 'action');
+  if (action === 'upload') {
+    const service = str(f, 'service');
+    if (!services.some((s) => s.slug === service)) return Astro.redirect(msg(back, 'Alege serviciul.', 'err'));
+    const added: Project[] = []; const errors: string[] = [];
+    for (const file of files(f, 'images')) {
+      try { added.push({ id: newId(), service, ...(await saveImage(file)), alt: str(f, 'alt', 150) || undefined, featured: bool(f, 'featured') || undefined, createdAt: new Date().toISOString() }); }
+      catch (e) { errors.push((e as Error).message); }
+    }
+    if (added.length) update('projects', (p) => { p.unshift(...added); });
+    return Astro.redirect(errors.length ? msg(back, errors.join(' '), 'err') : msg(back, `${added.length} fotografii adăugate.`));
+  }
+  const id = str(f, 'id');
+  if (action === 'delete') {
+    const p = read('projects').find((x) => x.id === id);
+    if (p) { update('projects', (all) => all.filter((x) => x.id !== id)); removeUpload(p.thumb); if (p.full !== p.thumb) removeUpload(p.full); }
+    return Astro.redirect(msg(back, 'Fotografie ștearsă.'));
+  }
+  if (action === 'save') {
+    update('projects', (all) => {
+      const p = all.find((x) => x.id === id); if (!p) return;
+      const svc = str(f, 'service'); if (services.some((s) => s.slug === svc)) p.service = svc;
+      p.alt = str(f, 'alt', 150) || undefined; p.featured = bool(f, 'featured') || undefined;
+    });
+    return Astro.redirect(msg(back, 'Salvat.'));
+  }
+}
+const all = read('projects');
+const projects = filter ? all.filter((p) => p.service === filter) : all;
+---
+<Admin title="Portofoliu">
+  <form method="post" enctype="multipart/form-data" class="card max-w-3xl space-y-4">
+    <h2 class="text-lg">Adaugă fotografii</h2>
+    <input type="hidden" name="action" value="upload" />
+    <div class="grid gap-4 sm:grid-cols-2">
+      <label class="label">Serviciu<select class="field" name="service" required>
+        <option value="">Alege…</option>
+        {services.map((s) => <option value={s.slug} selected={s.slug === filter}>{s.title}</option>)}
+      </select></label>
+      <label class="label">Fotografii (JPG/PNG/WebP, max. 15 MB fiecare)<input class="field" type="file" name="images" accept="image/*" multiple required /></label>
+    </div>
+    <label class="label">Descriere imagine (opțional, pentru accesibilitate și Google)<input class="field" name="alt" maxlength="150" /></label>
+    <label class="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" name="featured" class="h-4 w-4" /> Afișează pe prima pagină</label>
+    <button class="btn btn-primary btn-sm">Încarcă</button>
+  </form>
+
+  <div class="mt-8 flex flex-wrap items-center gap-2 text-sm">
+    <a href="/admin/portofoliu" class:list={['rounded-full px-3 py-1 font-semibold', !filter ? 'bg-charcoal text-white' : 'bg-white ring-1 ring-line']}>Toate ({all.length})</a>
+    {services.filter((s) => all.some((p) => p.service === s.slug)).map((s) => <a href={`/admin/portofoliu?service=${s.slug}`} class:list={['rounded-full px-3 py-1 font-semibold', filter === s.slug ? 'bg-charcoal text-white' : 'bg-white ring-1 ring-line']}>{s.title}</a>)}
+  </div>
+
+  <ul class="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    {projects.map((p) => (
+      <li class="card space-y-3">
+        <img src={p.thumb} alt={p.alt ?? ''} loading="lazy" class="aspect-[4/3] w-full rounded-lg object-cover" />
+        <form method="post" class="space-y-2">
+          <input type="hidden" name="id" value={p.id} />
+          <select class="field" name="service">{services.map((s) => <option value={s.slug} selected={s.slug === p.service}>{s.title}</option>)}</select>
+          <input class="field" name="alt" value={p.alt ?? ''} placeholder="Descriere imagine" maxlength="150" />
+          <label class="flex items-center gap-2 text-xs font-semibold"><input type="checkbox" name="featured" checked={!!p.featured} class="h-4 w-4" /> Pe prima pagină</label>
+          <div class="flex gap-2">
+            <button name="action" value="save" class="btn btn-dark btn-sm">Salvează</button>
+            <button name="action" value="delete" class="btn btn-danger btn-sm" onclick="return confirm('Ștergi fotografia?')">Șterge</button>
+          </div>
+        </form>
+      </li>
+    ))}
+  </ul>
+</Admin>

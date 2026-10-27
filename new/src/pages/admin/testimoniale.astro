@@ -1,0 +1,50 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import { read, update, newId } from '../../lib/store';
+import { str, msg } from '../../lib/admin';
+
+if (Astro.request.method === 'POST') {
+  const f = await Astro.request.formData();
+  const action = str(f, 'action'); const id = str(f, 'id');
+  if (action === 'add') {
+    const author = str(f, 'author', 100); const text = str(f, 'text', 800);
+    if (!author || !text) return Astro.redirect(msg('/admin/testimoniale', 'Completează numele și textul.', 'err'));
+    update('testimonials', (t) => { t.push({ id: newId(), author, company: str(f, 'company', 100) || undefined, text }); });
+  } else if (action === 'save') {
+    update('testimonials', (t) => { const x = t.find((k) => k.id === id); if (x) { x.author = str(f, 'author', 100) || x.author; x.company = str(f, 'company', 100) || undefined; x.text = str(f, 'text', 800) || x.text; } });
+  } else if (action === 'delete') update('testimonials', (t) => t.filter((k) => k.id !== id));
+  return Astro.redirect(msg('/admin/testimoniale', 'Salvat.'));
+}
+const items = read('testimonials');
+---
+<Admin title="Testimoniale">
+  <p class="mb-4 max-w-2xl text-sm text-mute">Secțiunea apare pe prima pagină doar dacă există cel puțin un testimonial.</p>
+  <form method="post" class="card max-w-3xl space-y-3">
+    <h2 class="text-lg">Adaugă testimonial</h2>
+    <input type="hidden" name="action" value="add" />
+    <div class="grid gap-3 sm:grid-cols-2">
+      <label class="label">Nume<input class="field" name="author" required maxlength="100" /></label>
+      <label class="label">Firmă (opțional)<input class="field" name="company" maxlength="100" /></label>
+    </div>
+    <label class="label">Text<textarea class="field" name="text" rows="3" required maxlength="800"></textarea></label>
+    <button class="btn btn-primary btn-sm">Adaugă</button>
+  </form>
+  <ul class="mt-6 space-y-3">
+    {items.map((t) => (
+      <li class="card">
+        <form method="post" class="space-y-3">
+          <input type="hidden" name="id" value={t.id} />
+          <div class="grid gap-3 sm:grid-cols-2">
+            <label class="label">Nume<input class="field" name="author" value={t.author} /></label>
+            <label class="label">Firmă<input class="field" name="company" value={t.company ?? ''} /></label>
+          </div>
+          <label class="label">Text<textarea class="field" name="text" rows="3">{t.text}</textarea></label>
+          <div class="flex gap-2">
+            <button name="action" value="save" class="btn btn-dark btn-sm">Salvează</button>
+            <button name="action" value="delete" class="btn btn-danger btn-sm" onclick="return confirm('Ștergi testimonialul?')">Șterge</button>
+          </div>
+        </form>
+      </li>
+    ))}
+  </ul>
+</Admin>

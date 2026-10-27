@@ -1,5 +1,7 @@
 ---
-import { categories, servicesIn, serviceUrl, site } from '../lib/content';
+import { getCategories, servicesIn, serviceUrl, getSite } from '../lib/content';
+const categories = getCategories();
+const site = getSite();
 const path = Astro.url.pathname;
 const links = [{ href: '/portofoliu', label: 'Portofoliu' }, { href: '/clienti', label: 'Clienți' }, { href: '/contact', label: 'Contact' }];
 ---

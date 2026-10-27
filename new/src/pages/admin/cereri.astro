@@ -1,0 +1,38 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import { read, update } from '../../lib/store';
+import { msg } from '../../lib/admin';
+if (Astro.request.method === 'POST') {
+  const f = await Astro.request.formData();
+  const id = String(f.get('id')); const action = String(f.get('action'));
+  update('leads', (l) => {
+    const i = l.findIndex((x) => x.id === id);
+    if (i < 0) return;
+    if (action === 'delete') l.splice(i, 1);
+    else l[i].status = l[i].status === 'nou' ? 'rezolvat' : 'nou';
+  });
+  return Astro.redirect(msg('/admin/cereri', 'Actualizat.'));
+}
+const leads = read('leads');
+---
+<Admin title="Cereri de ofertă">
+  {leads.length === 0 && <p class="text-mute">Nu ai primit cereri încă.</p>}
+  <ul class="space-y-3">
+    {leads.map((l) => (
+      <li class:list={['card', l.status === 'nou' && 'ring-2 ring-brand']}>
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p class="font-bold">{l.nume} · <a class="text-brand-dark" href={`tel:${l.telefon}`}>{l.telefon}</a>{l.email && <> · <a class="text-brand-dark" href={`mailto:${l.email}`}>{l.email}</a></>}</p>
+            <p class="text-sm text-mute">{l.serviciu || 'General'} · {new Date(l.createdAt).toLocaleString('ro-RO')} · {l.status}</p>
+          </div>
+          <form method="post" class="flex gap-2">
+            <input type="hidden" name="id" value={l.id} />
+            <button name="action" value="toggle" class="btn btn-dark btn-sm">{l.status === 'nou' ? 'Marchează rezolvat' : 'Redeschide'}</button>
+            <button name="action" value="delete" class="btn btn-danger btn-sm" onclick="return confirm('Ștergi cererea?')">Șterge</button>
+          </form>
+        </div>
+        <p class="mt-3 whitespace-pre-line text-sm">{l.mesaj}</p>
+      </li>
+    ))}
+  </ul>
+</Admin>

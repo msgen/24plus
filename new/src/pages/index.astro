@@ -1,11 +1,17 @@
 ---
 import Base from '../layouts/Base.astro';
 import ServiceCard from '../components/ServiceCard.astro';
-import { categories, servicesIn, serviceBySlug, clients, projects, site } from '../lib/content';
+import { getCategories, servicesIn, serviceBySlug, getClients, getProjects, getTestimonials, getSite } from '../lib/content';
+const site = getSite();
+const categories = getCategories();
+const clients = getClients();
+const testimonials = getTestimonials();
 
 const featured = ['litere-volumetrice', 'casete-luminoase', 'personalizari-auto', 'decorari-geamuri-si-vitrine', 'totem', 'mese-candybar']
   .map(serviceBySlug).filter((s) => !!s);
-const strip = projects.filter((_, i) => i % 3 === 0).slice(0, 12);
+const all = getProjects();
+const promoted = all.filter((p) => p.featured);
+const strip = (promoted.length >= 4 ? promoted : all.filter((_, i) => i % 3 === 0)).slice(0, 12);
 ---
 <Base title={site.name}>
   <section class="relative isolate overflow-hidden bg-charcoal text-white">
@@ -13,8 +19,8 @@ const strip = projects.filter((_, i) => i % 3 === 0).slice(0, 12);
     <div class="absolute inset-0 -z-10 bg-gradient-to-r from-charcoal/95 via-charcoal/60 to-transparent"></div>
     <div class="container-x py-24 sm:py-32">
       <p class="eyebrow eyebrow-light">Producție publicitară · Râmnicu Vâlcea</p>
-      <h1 class="mt-4 max-w-3xl text-4xl sm:text-6xl">Brandul tău, văzut de departe.</h1>
-      <p class="mt-5 max-w-xl text-lg text-white/80">De la design la montaj: litere volumetrice, firme luminoase, personalizări auto, print mare și digital, obiecte promoționale.</p>
+      <h1 class="mt-4 max-w-3xl text-4xl sm:text-6xl">{site.heroTitle}</h1>
+      <p class="mt-5 max-w-xl text-lg text-white/80">{site.heroSubtitle}</p>
       <div class="mt-8 flex flex-wrap gap-3">
         <a href="/contact#oferta" class="btn btn-primary">Cere ofertă</a>
         <a href="/portofoliu" class="btn btn-ghost">Vezi portofoliul</a>
@@ -38,11 +44,7 @@ const strip = projects.filter((_, i) => i % 3 === 0).slice(0, 12);
       <p class="eyebrow">Despre noi</p>
       <h2 class="mt-2 text-3xl sm:text-4xl">Soluții complete, la prețuri corecte.</h2>
     </div>
-    <div class="space-y-4 text-mute">
-      <p><strong class="text-ink">24 Plus Media</strong> este o firmă de producție publicitară, specializată în materiale publicitare, decorări și personalizări auto, vitrine, spații comerciale, semnalistică de interior și exterior, print de mari dimensiuni, tipar digital și obiecte promoționale.</p>
-      <p><strong class="text-ink">Echipa noastră</strong> îți oferă soluții complete: design, consiliere în alegerea materialelor, producție, asamblare, montaj și logistică.</p>
-      <p>Ne adaptăm cerințelor tale, reducem la minimum timpii de livrare și lucrăm cu soluții de calitate la prețuri corecte.</p>
-    </div>
+    <div class="space-y-4 text-mute">{site.intro.map((p) => <p>{p}</p>)}</div>
   </section>
 
   <section class="container-x mt-20">
@@ -71,9 +73,24 @@ const strip = projects.filter((_, i) => i % 3 === 0).slice(0, 12);
     <p class="eyebrow">Încredere</p>
     <h2 class="mt-2 text-3xl sm:text-4xl">Au lucrat cu noi</h2>
     <ul class="mt-6 flex flex-wrap gap-2">
-      {clients.map((c) => <li class="rounded-full bg-white px-4 py-2 text-sm font-semibold ring-1 ring-line">{c.name}</li>)}
+      {clients.map((c) => <li class="rounded-full bg-white px-4 py-2 text-sm font-semibold ring-1 ring-line">{c.logo ? <img src={c.logo} alt={c.name} loading="lazy" class="h-8 w-auto" /> : c.name}</li>)}
     </ul>
   </section>
+
+  {testimonials.length > 0 && (
+    <section class="container-x mt-20">
+      <p class="eyebrow">Păreri</p>
+      <h2 class="mt-2 text-3xl sm:text-4xl">Ce spun clienții</h2>
+      <ul class="mt-8 grid gap-5 md:grid-cols-3">
+        {testimonials.map((t) => (
+          <li class="rounded-2xl bg-white p-6 ring-1 ring-line">
+            <p class="text-mute">„{t.text}”</p>
+            <p class="mt-4 text-sm font-bold">{t.author}{t.company ? `, ${t.company}` : ''}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
 
   <section class="container-x mt-20">
     <div class="rounded-3xl bg-brand p-8 text-charcoal sm:p-12">

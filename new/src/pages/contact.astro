@@ -1,7 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import QuoteForm from '../components/QuoteForm.astro';
-import { site } from '../lib/content';
+import { getSite } from '../lib/content';
+const site = getSite();
 ---
 <Base title="Contact" description={`Contactează 24 Plus Media: ${site.address}, ${site.phone}, ${site.email}.`}>
   <div class="container-x pt-12">

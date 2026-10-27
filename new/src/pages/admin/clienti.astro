@@ -1,0 +1,61 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import { read, update } from '../../lib/store';
+import { saveImage, removeUpload } from '../../lib/images';
+import { str, files, msg } from '../../lib/admin';
+
+const cleanUrl = (u: string) => (u && !/^https?:\/\//.test(u) ? `https://${u}` : u) || null;
+
+if (Astro.request.method === 'POST') {
+  const f = await Astro.request.formData();
+  const action = str(f, 'action'); const id = Number(f.get('id'));
+  try {
+    if (action === 'add') {
+      const name = str(f, 'name', 100); if (!name) throw new Error('Numele este obligatoriu.');
+      const logo = files(f, 'logo')[0];
+      const saved = logo ? await saveImage(logo, { thumb: false, width: 400 }) : null;
+      update('clients', (c) => { c.push({ id: Math.max(0, ...c.map((x) => x.id)) + 1, name, url: cleanUrl(str(f, 'url', 200)), logo: saved?.full ?? null }); });
+    } else if (action === 'save') {
+      const logo = files(f, 'logo')[0];
+      const saved = logo ? await saveImage(logo, { thumb: false, width: 400 }) : null;
+      let old: string | null | undefined;
+      update('clients', (c) => { const x = c.find((k) => k.id === id); if (!x) return; x.name = str(f, 'name', 100) || x.name; x.url = cleanUrl(str(f, 'url', 200)); if (saved) { old = x.logo; x.logo = saved.full; } });
+      removeUpload(old);
+    } else if (action === 'delete') {
+      let old: string | null | undefined;
+      update('clients', (c) => { const x = c.find((k) => k.id === id); old = x?.logo; return c.filter((k) => k.id !== id); });
+      removeUpload(old);
+    }
+  } catch (e) { return Astro.redirect(msg('/admin/clienti', (e as Error).message, 'err')); }
+  return Astro.redirect(msg('/admin/clienti', 'Salvat.'));
+}
+const clients = read('clients');
+---
+<Admin title="Clienți">
+  <form method="post" enctype="multipart/form-data" class="card max-w-3xl space-y-3">
+    <h2 class="text-lg">Adaugă client</h2>
+    <input type="hidden" name="action" value="add" />
+    <div class="grid gap-3 sm:grid-cols-3">
+      <label class="label">Nume<input class="field" name="name" required maxlength="100" /></label>
+      <label class="label">Site (opțional)<input class="field" name="url" maxlength="200" placeholder="https://" /></label>
+      <label class="label">Logo (opțional)<input class="field" type="file" name="logo" accept="image/*" /></label>
+    </div>
+    <button class="btn btn-primary btn-sm">Adaugă</button>
+  </form>
+  <ul class="mt-6 space-y-3">
+    {clients.map((c) => (
+      <li class="card">
+        <form method="post" enctype="multipart/form-data" class="grid items-end gap-3 sm:grid-cols-[1fr_1fr_1fr_auto]">
+          <input type="hidden" name="id" value={c.id} />
+          <label class="label">Nume<input class="field" name="name" value={c.name} required /></label>
+          <label class="label">Site<input class="field" name="url" value={c.url ?? ''} /></label>
+          <label class="label">Logo {c.logo && <img src={c.logo} alt="" class="mb-1 h-8 w-auto" />}<input class="field" type="file" name="logo" accept="image/*" /></label>
+          <div class="flex gap-2">
+            <button name="action" value="save" class="btn btn-dark btn-sm">Salvează</button>
+            <button name="action" value="delete" class="btn btn-danger btn-sm" onclick="return confirm('Ștergi clientul?')">Șterge</button>
+          </div>
+        </form>
+      </li>
+    ))}
+  </ul>
+</Admin>

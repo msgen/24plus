@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
-import { site } from '../lib/content';
+import { getSite } from '../lib/content';
+const site = getSite();
 ---
 <Base title="Politica de confidențialitate" noindex>
   <div class="container-x max-w-3xl pt-12">

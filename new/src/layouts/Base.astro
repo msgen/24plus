@@ -2,7 +2,8 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { site } from '../lib/content';
+import { getSite } from '../lib/content';
+const site = getSite();
 
 interface Props { title: string; description?: string; image?: string; noindex?: boolean }
 const { title, description = site.description, image = '/img/hero.webp', noindex = false } = Astro.props;
@@ -13,7 +14,7 @@ const ld = {
   '@type': 'LocalBusiness',
   name: site.name,
   url: site.url,
-  telephone: '+40745537715',
+  telephone: site.phoneE164,
   email: site.email,
   image: new URL('/logo.webp', site.url).href,
   address: { '@type': 'PostalAddress', streetAddress: 'Str. Gib Mihăescu nr. 14', addressLocality: 'Râmnicu Vâlcea', addressCountry: 'RO' },

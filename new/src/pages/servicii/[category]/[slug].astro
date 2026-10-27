@@ -3,9 +3,10 @@ import Base from '../../../layouts/Base.astro';
 import Gallery from '../../../components/Gallery.astro';
 import QuoteForm from '../../../components/QuoteForm.astro';
 import ServiceCard from '../../../components/ServiceCard.astro';
-import { services, serviceBySlug, categoryBySlug, projectsFor, servicesIn, site } from '../../../lib/content';
-export function getStaticPaths() { return services.map((s) => ({ params: { category: s.category, slug: s.slug } })); }
-const s = serviceBySlug(Astro.params.slug!)!;
+import { serviceBySlug, categoryBySlug, projectsFor, servicesIn, getSite } from '../../../lib/content';
+const site = getSite();
+const s = serviceBySlug(Astro.params.slug!);
+if (!s || s.category !== Astro.params.category) return Astro.rewrite('/404');
 const cat = categoryBySlug(s.category);
 const gallery = projectsFor(s.slug);
 const related = servicesIn(s.category).filter((x) => x.slug !== s.slug).slice(0, 3);
