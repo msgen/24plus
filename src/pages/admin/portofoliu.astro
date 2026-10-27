@@ -58,14 +58,14 @@ const projects = filter ? all.filter((p) => p.service === filter) : all;
   </form>
 
   <div class="mt-8 flex flex-wrap items-center gap-2 text-sm">
-    <a href="/admin/portofoliu" class:list={['rounded-full px-3 py-1 font-semibold', !filter ? 'bg-charcoal text-white' : 'bg-white ring-1 ring-line']}>Toate ({all.length})</a>
-    {services.filter((s) => all.some((p) => p.service === s.slug)).map((s) => <a href={`/admin/portofoliu?service=${s.slug}`} class:list={['rounded-full px-3 py-1 font-semibold', filter === s.slug ? 'bg-charcoal text-white' : 'bg-white ring-1 ring-line']}>{s.title}</a>)}
+    <a href="/admin/portofoliu" class:list={['px-3 py-1 font-bold border-2 border-ink', !filter ? 'bg-ink text-white' : 'bg-white hover:bg-brand']}>Toate ({all.length})</a>
+    {services.filter((s) => all.some((p) => p.service === s.slug)).map((s) => <a href={`/admin/portofoliu?service=${s.slug}`} class:list={['px-3 py-1 font-bold border-2 border-ink', filter === s.slug ? 'bg-ink text-white' : 'bg-white hover:bg-brand']}>{s.title}</a>)}
   </div>
 
   <ul class="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
     {projects.map((p) => (
       <li class="card space-y-3">
-        <img src={p.thumb} alt={p.alt ?? ''} loading="lazy" class="aspect-[4/3] w-full rounded-lg object-cover" />
+        <img src={p.thumb} alt={p.alt ?? ''} loading="lazy" class="aspect-[4/3] w-full border-2 border-ink object-cover" />
         <form method="post" class="space-y-2">
           <input type="hidden" name="id" value={p.id} />
           <select class="field" name="service">{services.map((s) => <option value={s.slug} selected={s.slug === p.service}>{s.title}</option>)}</select>

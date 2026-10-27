@@ -19,7 +19,7 @@ const leads = (await read('leads'));
   {leads.length === 0 && <p class="text-mute">Nu ai primit cereri încă.</p>}
   <ul class="space-y-3">
     {leads.map((l) => (
-      <li class:list={['card', l.status === 'nou' && 'ring-2 ring-brand']}>
+      <li class:list={['card', l.status === 'nou' && 'border-brand shadow-[6px_6px_0_var(--color-brand)]']}>
         <div class="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p class="font-bold">{l.nume} · <a class="text-brand-dark" href={`tel:${l.telefon}`}>{l.telefon}</a>{l.email && <> · <a class="text-brand-dark" href={`mailto:${l.email}`}>{l.email}</a></>}</p>

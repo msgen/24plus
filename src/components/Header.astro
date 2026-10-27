@@ -5,21 +5,21 @@ const site = getSite();
 const path = Astro.url.pathname;
 const links = [{ href: '/portofoliu', label: 'Portofoliu' }, { href: '/clienti', label: 'Clienți' }, { href: '/contact', label: 'Contact' }];
 ---
-<header class="sticky top-0 z-40 bg-charcoal text-white">
-  <div class="container-x flex h-16 items-center justify-between gap-4">
+<header class="sticky top-0 z-40 border-b-2 border-ink bg-white">
+  <div class="mx-auto flex h-[68px] max-w-[88rem] items-center justify-between gap-4 px-4 sm:px-8">
     <a href="/" class="flex items-center" aria-label="24 Plus Media, prima pagină">
-      <img src="/logo.webp" alt="24 Plus Media" width="360" height="222" class="h-11 w-auto" />
+      <img src="/logo.webp" alt="24 Plus Media" width="440" height="271" class="h-11 w-auto rounded-md bg-ink p-0.5" />
     </a>
 
-    <nav class="hidden items-center gap-1 text-sm font-semibold md:flex" aria-label="Principal">
+    <nav class="hidden items-center gap-7 text-sm font-bold md:flex" aria-label="Principal">
       <div class="group relative">
-        <a href="/servicii" class:list={['rounded-full px-4 py-2 hover:bg-white/10', path.startsWith('/servicii') && 'text-brand']}>Servicii</a>
-        <div class="absolute left-0 top-full hidden w-[40rem] rounded-2xl bg-white p-6 text-ink shadow-2xl group-focus-within:block group-hover:block">
+        <a href="/servicii" class:list={['py-5 hover:text-brand-dark', path.startsWith('/servicii') && 'text-brand-dark']}>Servicii</a>
+        <div class="absolute -left-4 top-full hidden w-[42rem] border-2 border-ink bg-white p-6 group-focus-within:block group-hover:block">
           <div class="grid grid-cols-2 gap-6">
             {categories.map((c) => (
               <div>
-                <a href={`/servicii/${c.slug}`} class="font-extrabold text-brand-dark hover:underline">{c.title}</a>
-                <ul class="mt-2 space-y-1 text-sm font-medium text-mute">
+                <a href={`/servicii/${c.slug}`} class="font-extrabold hover:text-brand-dark">{c.title} →</a>
+                <ul class="mt-2 space-y-1 text-sm font-semibold text-mute">
                   {servicesIn(c.slug).map((s) => <li><a href={serviceUrl(s)} class="hover:text-ink hover:underline">{s.title}</a></li>)}
                 </ul>
               </div>
@@ -27,18 +27,18 @@ const links = [{ href: '/portofoliu', label: 'Portofoliu' }, { href: '/clienti',
           </div>
         </div>
       </div>
-      {links.map((l) => <a href={l.href} class:list={['rounded-full px-4 py-2 hover:bg-white/10', path.startsWith(l.href) && 'text-brand']}>{l.label}</a>)}
-      <a href="/contact#oferta" class="btn btn-primary ml-2">Cere ofertă</a>
+      {links.map((l) => <a href={l.href} class:list={['py-5 hover:text-brand-dark', path.startsWith(l.href) && 'text-brand-dark']}>{l.label}</a>)}
+      <a href="/contact#oferta" class="btn btn-dark py-2.5">Cere ofertă →</a>
     </nav>
 
     <details class="md:hidden">
-      <summary class="cursor-pointer list-none rounded-full border border-white/30 px-4 py-2 text-sm font-bold">Meniu</summary>
-      <div class="absolute inset-x-0 top-16 max-h-[80vh] overflow-y-auto bg-charcoal px-4 pb-6">
-        <a href="/servicii" class="block py-3 font-bold">Toate serviciile</a>
-        {categories.map((c) => <a href={`/servicii/${c.slug}`} class="block border-t border-white/10 py-3 text-white/80">{c.title}</a>)}
-        {links.map((l) => <a href={l.href} class="block border-t border-white/10 py-3 font-bold">{l.label}</a>)}
-        <a href="/contact#oferta" class="btn btn-primary mt-3 w-full">Cere ofertă</a>
-        <a href={site.phoneHref} class="btn btn-ghost mt-2 w-full">{site.phone}</a>
+      <summary class="cursor-pointer list-none rounded-md border-2 border-ink px-4 py-2 text-sm font-extrabold">Meniu</summary>
+      <div class="absolute inset-x-0 top-[68px] max-h-[80vh] overflow-y-auto border-b-2 border-ink bg-white px-4 pb-6">
+        <a href="/servicii" class="block py-3 font-extrabold">Toate serviciile</a>
+        {categories.map((c) => <a href={`/servicii/${c.slug}`} class="block border-t border-line py-3 text-mute">{c.title}</a>)}
+        {links.map((l) => <a href={l.href} class="block border-t border-line py-3 font-extrabold">{l.label}</a>)}
+        <a href="/contact#oferta" class="btn btn-dark mt-3 w-full">Cere ofertă →</a>
+        <a href={site.phoneHref} class="btn btn-primary mt-2 w-full">{site.phone}</a>
       </div>
     </details>
   </div>

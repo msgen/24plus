@@ -5,17 +5,17 @@ import { getSite } from '../lib/content';
 const site = getSite();
 ---
 <Base title="Contact" description={`Contactează 24 Plus Media: ${site.address}, ${site.phone}, ${site.email}.`}>
-  <div class="container-x pt-12">
+  <div class="container-x pt-14">
     <p class="eyebrow">Contact</p>
-    <h1 class="mt-2 text-4xl sm:text-5xl">Hai să discutăm proiectul tău</h1>
-    <div class="mt-10 grid gap-10 lg:grid-cols-2">
-      <div class="space-y-6">
-        <dl class="space-y-5">
-          <div><dt class="text-xs font-bold uppercase tracking-widest text-mute">Telefon</dt><dd class="mt-1 text-2xl font-extrabold"><a href={site.phoneHref}>{site.phone}</a></dd></div>
-          <div><dt class="text-xs font-bold uppercase tracking-widest text-mute">E-mail</dt><dd class="mt-1 text-lg font-bold"><a href={`mailto:${site.email}`}>{site.email}</a></dd></div>
-          <div><dt class="text-xs font-bold uppercase tracking-widest text-mute">Adresă</dt><dd class="mt-1 text-lg font-bold">{site.address}</dd></div>
+    <h1 class="display mt-3 text-5xl sm:text-7xl">Hai să <span class="text-brand">discutăm</span><br />proiectul tău</h1>
+    <div class="mt-12 grid gap-10 lg:grid-cols-2">
+      <div class="space-y-8">
+        <dl class="space-y-6">
+          <div><dt class="text-xs font-extrabold uppercase tracking-[0.18em] text-brand-dark">Telefon</dt><dd class="mt-1 text-3xl font-extrabold"><a href={site.phoneHref}>{site.phone}</a></dd></div>
+          <div><dt class="text-xs font-extrabold uppercase tracking-[0.18em] text-brand-dark">E-mail</dt><dd class="mt-1 text-xl font-bold"><a href={`mailto:${site.email}`}>{site.email}</a></dd></div>
+          <div><dt class="text-xs font-extrabold uppercase tracking-[0.18em] text-brand-dark">Adresă</dt><dd class="mt-1 text-xl font-bold">{site.address}</dd></div>
         </dl>
-        <iframe title="Harta 24 Plus Media" loading="lazy" class="h-72 w-full rounded-2xl border-0" referrerpolicy="no-referrer-when-downgrade"
+        <iframe title="Harta 24 Plus Media" loading="lazy" class="h-72 w-full border-2 border-ink" referrerpolicy="no-referrer-when-downgrade"
           src="https://www.openstreetmap.org/export/embed.html?bbox=24.34%2C45.09%2C24.40%2C45.12&layer=mapnik"></iframe>
       </div>
       <div id="oferta" class="scroll-mt-24"><QuoteForm /></div>

@@ -34,7 +34,7 @@ const s = found;
 ---
 <Admin title={s.title}>
   <p class="mb-4 text-sm"><a href="/admin/servicii" class="text-brand-dark hover:underline">← Toate serviciile</a>{!s.hidden && <> · <a class="text-brand-dark hover:underline" href={`/servicii/${s.category}/${s.slug}`} target="_blank">Vezi pe site ↗</a></>}</p>
-  {s.needsReview && <p class="mb-4 rounded-lg bg-orange-50 px-4 py-3 text-sm font-semibold text-orange-800">Textul a fost rescris automat și nu a fost verificat. Citește-l, corectează-l și apasă Salvează.</p>}
+  {s.needsReview && <p class="mb-4 border-2 border-brand bg-brand-tint px-4 py-3 text-sm font-bold">Textul a fost rescris automat și nu a fost verificat. Citește-l, corectează-l și apasă Salvează.</p>}
   <form method="post" class="card max-w-3xl space-y-4">
     <label class="label">Titlu<input class="field" name="title" value={s.title} required maxlength="100" /></label>
     <div class="grid gap-4 sm:grid-cols-2">

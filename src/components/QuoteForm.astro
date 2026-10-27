@@ -3,30 +3,30 @@ import { getServices } from '../lib/content';
 const services = getServices();
 const { service = '' } = Astro.props as { service?: string };
 ---
-<form id="quote" class="space-y-4 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-line" novalidate>
+<form id="quote" class="space-y-4 border-2 border-ink bg-white p-6" novalidate>
   <div class="grid gap-4 sm:grid-cols-2">
-    <label class="block text-sm font-semibold">Nume
-      <input name="nume" required autocomplete="name" class="mt-1 w-full rounded-lg border border-line px-3 py-2.5 font-normal" />
+    <label class="label">Nume
+      <input name="nume" required autocomplete="name" class="field" />
     </label>
-    <label class="block text-sm font-semibold">Telefon
-      <input name="telefon" required type="tel" autocomplete="tel" class="mt-1 w-full rounded-lg border border-line px-3 py-2.5 font-normal" />
+    <label class="label">Telefon
+      <input name="telefon" required type="tel" autocomplete="tel" class="field" />
     </label>
   </div>
-  <label class="block text-sm font-semibold">E-mail
-    <input name="email" type="email" autocomplete="email" class="mt-1 w-full rounded-lg border border-line px-3 py-2.5 font-normal" />
+  <label class="label">E-mail
+    <input name="email" type="email" autocomplete="email" class="field" />
   </label>
-  <label class="block text-sm font-semibold">Ce te interesează?
-    <select name="serviciu" class="mt-1 w-full rounded-lg border border-line bg-white px-3 py-2.5 font-normal">
+  <label class="label">Ce te interesează?
+    <select name="serviciu" class="field">
       <option value="">Alege un serviciu (opțional)</option>
       {services.map((s) => <option value={s.title} selected={s.slug === service}>{s.title}</option>)}
     </select>
   </label>
-  <label class="block text-sm font-semibold">Detalii
-    <textarea name="mesaj" rows="4" required class="mt-1 w-full rounded-lg border border-line px-3 py-2.5 font-normal" placeholder="Dimensiuni, cantitate, termen..."></textarea>
+  <label class="label">Detalii
+    <textarea name="mesaj" rows="4" required class="field" placeholder="Dimensiuni, cantitate, termen..."></textarea>
   </label>
   <input name="website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
   <p class="text-xs text-mute">Prin trimitere ești de acord cu <a class="underline" href="/politica-confidentialitate">politica de confidențialitate</a>.</p>
-  <button class="btn btn-primary w-full" type="submit">Trimite cererea</button>
+  <button class="btn btn-dark w-full" type="submit">Trimite cererea →</button>
   <p id="quote-status" role="status" class="text-sm font-semibold"></p>
 </form>
 <script>

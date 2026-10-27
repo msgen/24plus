@@ -1,39 +1,40 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/manrope';
 
+/* Palette: white, black, green. Greys are black at reduced opacity; the green tint is green at low opacity. */
 @theme {
   --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
-  --color-brand: #3fae2a;
-  --color-brand-dark: #2c7f1d;
-  --color-brand-tint: #eaf6e6;
-  --color-charcoal: #2c2b27;
-  --color-ink: #1b1b1b;
-  --color-mute: #6b6b6b;
-  --color-line: #e5e5e5;
-  --color-paper: #fafaf8;
-  --color-signal: #ff7a1a;
+  --color-brand: #3fae2a;       /* logo green: big type, fills, buttons */
+  --color-brand-dark: #2c7f1d;  /* green for small text on white (contrast) */
+  --color-brand-tint: #3fae2a24;
+  --color-ink: #0d0d0d;
+  --color-charcoal: #0d0d0d;    /* alias of ink, kept for older class names */
+  --color-mute: #0d0d0da6;
+  --color-line: #0d0d0d24;
+  --color-paper: #ffffff;
 }
 
 html { scroll-behavior: smooth; }
-body { @apply bg-paper font-sans text-ink antialiased; }
+body { @apply bg-white font-sans text-ink antialiased; }
 h1, h2, h3 { @apply font-extrabold tracking-tight text-balance; }
-:focus-visible { outline: 3px solid var(--color-signal); outline-offset: 2px; }
+:focus-visible { outline: 3px solid var(--color-ink); outline-offset: 2px; box-shadow: 0 0 0 6px var(--color-brand); }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
 
 @layer components {
-.btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-bold transition; }
-.btn-primary { @apply bg-brand text-charcoal hover:bg-brand-dark hover:text-white; }
-.btn-dark { @apply bg-charcoal text-white hover:bg-black; }
-.btn-ghost { @apply border border-white/40 text-white hover:bg-white/10; }
-.container-x { @apply mx-auto w-full max-w-6xl px-4 sm:px-6; }
-.eyebrow { @apply text-xs font-bold uppercase tracking-[0.18em] text-brand-dark; }
-.eyebrow-light { @apply text-brand; }
-}
+  .container-x { @apply mx-auto w-full max-w-6xl px-4 sm:px-6; }
+  .display { @apply font-extrabold leading-[0.95] tracking-[-0.05em]; }
+  .eyebrow { @apply text-xs font-extrabold uppercase tracking-[0.18em] text-brand-dark; }
+  .eyebrow-light { @apply text-brand; }
 
-@layer components {
-  .field { @apply mt-1 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm font-normal; }
-  .label { @apply block text-sm font-semibold; }
-  .card { @apply rounded-2xl bg-white p-5 ring-1 ring-line; }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-md px-6 py-3.5 text-sm font-extrabold transition; }
+  .btn-primary { @apply bg-brand text-ink hover:bg-ink hover:text-white; }
+  .btn-dark { @apply bg-ink text-white hover:bg-brand hover:text-ink; }
+  .btn-ghost { @apply border-2 border-white text-white hover:bg-white hover:text-ink; }
   .btn-sm { @apply px-4 py-2 text-xs; }
-  .btn-danger { @apply bg-red-600 text-white hover:bg-red-700; }
+  .btn-danger { @apply border-2 border-ink bg-white text-ink hover:bg-ink hover:text-white; }
+
+  .field { @apply mt-1 w-full rounded-md border-2 border-ink bg-white px-3 py-2.5 text-sm font-normal; }
+  .label { @apply block text-sm font-bold; }
+  .card { @apply border-2 border-ink bg-white p-5; }
+  .rule { @apply border-ink; }
 }

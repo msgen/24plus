@@ -1,105 +1,116 @@
 ---
 import Base from '../layouts/Base.astro';
 import ServiceCard from '../components/ServiceCard.astro';
-import { getCategories, servicesIn, serviceBySlug, getClients, getProjects, getTestimonials, getSite } from '../lib/content';
+import { getCategories, servicesIn, serviceBySlug, getClients, getProjects, getTestimonials, getSite, projectsFor } from '../lib/content';
 const site = getSite();
 const categories = getCategories();
 const clients = getClients();
 const testimonials = getTestimonials();
-
-const featured = ['litere-volumetrice', 'casete-luminoase', 'personalizari-auto', 'decorari-geamuri-si-vitrine', 'totem', 'mese-candybar']
-  .map(serviceBySlug).filter((s) => !!s);
 const all = getProjects();
 const promoted = all.filter((p) => p.featured);
-const strip = (promoted.length >= 4 ? promoted : all.filter((_, i) => i % 3 === 0)).slice(0, 12);
+const strip = (promoted.length >= 4 ? promoted : all.filter((_, i) => i % 3 === 0)).slice(0, 8);
+const featured = ['litere-volumetrice', 'casete-luminoase', 'personalizari-auto', 'decorari-geamuri-si-vitrine', 'totem', 'mese-candybar']
+  .map(serviceBySlug).filter((s) => !!s);
+const heroPhoto = promoted[0]?.full ?? projectsFor('casete-luminoase')[0]?.full ?? '/img/hero.webp';
+const trio = ['litere-volumetrice', 'personalizari-auto', 'mese-candybar']
+  .map((slug) => ({ s: serviceBySlug(slug), p: projectsFor(slug)[1] ?? projectsFor(slug)[0] })).filter((x) => x.s && x.p);
 ---
-<Base title={site.name}>
-  <section class="relative isolate overflow-hidden bg-charcoal text-white">
-    <img src="/img/hero.webp" alt="" class="absolute inset-0 -z-10 h-full w-full object-cover opacity-70" fetchpriority="high" />
-    <div class="absolute inset-0 -z-10 bg-gradient-to-r from-charcoal/95 via-charcoal/60 to-transparent"></div>
-    <div class="container-x py-24 sm:py-32">
-      <p class="eyebrow eyebrow-light">Producție publicitară · Râmnicu Vâlcea</p>
-      <h1 class="mt-4 max-w-3xl text-4xl sm:text-6xl">{site.heroTitle}</h1>
-      <p class="mt-5 max-w-xl text-lg text-white/80">{site.heroSubtitle}</p>
-      <div class="mt-8 flex flex-wrap gap-3">
-        <a href="/contact#oferta" class="btn btn-primary">Cere ofertă</a>
-        <a href="/portofoliu" class="btn btn-ghost">Vezi portofoliul</a>
+<Base title={site.name} image={heroPhoto}>
+  <section class="grid border-b-2 border-ink lg:min-h-[640px] lg:grid-cols-[5fr_6fr]">
+    <div class="flex flex-col justify-between gap-12 bg-brand px-4 py-12 sm:px-8 lg:px-12 lg:py-14">
+      <p class="eyebrow text-ink">Producție publicitară<br />Râmnicu Vâlcea</p>
+      <h1 class="display text-[3.4rem] sm:text-7xl xl:text-[5.4rem]">{site.heroTitle}</h1>
+      <div>
+        <p class="max-w-md text-lg font-semibold">{site.heroSubtitle}</p>
+        <div class="mt-7 flex flex-wrap gap-3">
+          <a href="/contact#oferta" class="btn btn-dark">Cere ofertă →</a>
+          <a href="/portofoliu" class="btn border-2 border-ink hover:bg-ink hover:text-white">Vezi portofoliul</a>
+        </div>
       </div>
+    </div>
+    <div class="relative min-h-[320px] bg-ink">
+      <img src={heroPhoto} alt="" class="absolute inset-0 h-full w-full object-cover" fetchpriority="high" />
     </div>
   </section>
 
-  <section class="container-x relative z-10 -mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+  <section class="grid border-b-2 border-ink sm:grid-cols-2 lg:grid-cols-4">
     {categories.map((c, i) => (
-      <a href={`/servicii/${c.slug}`} class="rounded-2xl bg-white p-5 shadow-lg ring-1 ring-line transition hover:-translate-y-1">
-        <span class="text-xs font-bold text-brand-dark">{String(i + 1).padStart(2, '0')}</span>
-        <h2 class="mt-1 text-lg">{c.title}</h2>
-        <p class="mt-1 text-sm text-mute">{c.blurb}</p>
-        <p class="mt-3 text-xs font-bold text-mute">{servicesIn(c.slug).length} servicii →</p>
+      <a href={`/servicii/${c.slug}`} class="group flex min-h-[220px] flex-col justify-between border-ink p-8 transition hover:bg-brand max-sm:border-b-2 sm:border-b-2 sm:odd:border-r-2 lg:border-b-0 lg:border-r-2 lg:last:border-r-0">
+        <span class="display text-6xl text-brand group-hover:text-ink">{String(i + 1).padStart(2, '0')}</span>
+        <div>
+          <h2 class="text-2xl leading-tight">{c.title}</h2>
+          <p class="mt-1 text-sm text-mute group-hover:text-ink">{c.blurb}</p>
+        </div>
       </a>
     ))}
   </section>
 
-  <section class="container-x mt-20 grid gap-10 lg:grid-cols-2">
-    <div>
-      <p class="eyebrow">Despre noi</p>
-      <h2 class="mt-2 text-3xl sm:text-4xl">Soluții complete, la prețuri corecte.</h2>
+  <section class="container-x mt-24">
+    <h2 class="display text-5xl sm:text-7xl">Soluții complete,<br />la prețuri <span class="text-brand">corecte.</span></h2>
+    <div class="mt-10 text-lg text-mute md:columns-2 md:gap-12 [&>p]:mb-5">
+      {site.intro.map((p) => <p>{p}</p>)}
     </div>
-    <div class="space-y-4 text-mute">{site.intro.map((p) => <p>{p}</p>)}</div>
   </section>
 
-  <section class="container-x mt-20">
+  {trio.length === 3 && (
+    <section class="mt-16 grid border-y-2 border-ink md:grid-cols-[1.4fr_1fr_1fr]">
+      {trio.map(({ s, p }, i) => (
+        <a href={`/servicii/${s!.category}/${s!.slug}`} class="group relative block h-[420px] overflow-hidden border-ink max-md:border-b-2 md:border-r-2 md:last:border-r-0">
+          <img src={p!.full} alt={s!.title} loading="lazy" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+          <span class:list={['absolute bottom-0 left-0 px-4 py-2.5 text-sm font-bold', i === 1 ? 'bg-brand text-ink' : 'bg-ink text-white']}>{s!.title}</span>
+        </a>
+      ))}
+    </section>
+  )}
+
+  <section class="container-x mt-24">
     <div class="flex items-end justify-between gap-4">
-      <div><p class="eyebrow">Ce facem</p><h2 class="mt-2 text-3xl sm:text-4xl">Servicii populare</h2></div>
-      <a href="/servicii" class="hidden text-sm font-bold text-brand-dark hover:underline sm:block">Toate serviciile →</a>
+      <h2 class="display text-4xl sm:text-6xl">Servicii populare</h2>
+      <a href="/servicii" class="hidden text-sm font-extrabold hover:text-brand-dark sm:block">Toate serviciile →</a>
     </div>
-    <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {featured.map((s) => <ServiceCard service={s!} />)}
     </div>
   </section>
 
-  <section class="mt-20 bg-charcoal py-16 text-white">
-    <div class="container-x">
-      <div class="flex items-end justify-between gap-4">
-        <div><p class="eyebrow eyebrow-light">Lucrări recente</p><h2 class="mt-2 text-3xl sm:text-4xl">Din portofoliul nostru</h2></div>
-        <a href="/portofoliu" class="text-sm font-bold text-brand hover:underline">Vezi tot →</a>
+  {strip.length > 0 && (
+    <section class="mt-24 border-y-2 border-ink bg-ink py-16 text-white">
+      <div class="container-x">
+        <div class="flex items-end justify-between gap-4">
+          <h2 class="display text-4xl sm:text-6xl">Lucrări <span class="text-brand">recente</span></h2>
+          <a href="/portofoliu" class="text-sm font-extrabold text-brand hover:underline">Vezi tot →</a>
+        </div>
+        <ul class="mt-10 grid grid-cols-2 gap-px bg-white/30 sm:grid-cols-4">
+          {strip.map((p) => <li class="bg-ink"><a href="/portofoliu"><img src={p.thumb} alt={p.alt || 'Lucrare 24 Plus Media'} loading="lazy" width="640" height="480" class="aspect-square w-full object-cover transition duration-500 hover:opacity-80" /></a></li>)}
+        </ul>
       </div>
-      <ul class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-        {strip.map((p) => <li class="overflow-hidden rounded-xl"><a href="/portofoliu"><img src={p.thumb} alt="Lucrare 24 Plus Media" loading="lazy" width="640" height="480" class="aspect-[4/3] w-full object-cover transition duration-500 hover:scale-105" /></a></li>)}
-      </ul>
-    </div>
-  </section>
+    </section>
+  )}
 
-  <section class="container-x mt-20">
-    <p class="eyebrow">Încredere</p>
-    <h2 class="mt-2 text-3xl sm:text-4xl">Au lucrat cu noi</h2>
-    <ul class="mt-6 flex flex-wrap gap-2">
-      {clients.map((c) => <li class="rounded-full bg-white px-4 py-2 text-sm font-semibold ring-1 ring-line">{c.logo ? <img src={c.logo} alt={c.name} loading="lazy" class="h-8 w-auto" /> : c.name}</li>)}
-    </ul>
-  </section>
-
-  {testimonials.length > 0 && (
-    <section class="container-x mt-20">
-      <p class="eyebrow">Păreri</p>
-      <h2 class="mt-2 text-3xl sm:text-4xl">Ce spun clienții</h2>
-      <ul class="mt-8 grid gap-5 md:grid-cols-3">
-        {testimonials.map((t) => (
-          <li class="rounded-2xl bg-white p-6 ring-1 ring-line">
-            <p class="text-mute">„{t.text}”</p>
-            <p class="mt-4 text-sm font-bold">{t.author}{t.company ? `, ${t.company}` : ''}</p>
+  {clients.length > 0 && (
+    <section class="container-x mt-24">
+      <h2 class="display text-4xl sm:text-6xl">Au lucrat cu noi</h2>
+      <ul class="mt-8 flex flex-wrap border-l-2 border-t-2 border-ink">
+        {clients.map((c) => (
+          <li class="flex min-h-16 grow items-center justify-center border-b-2 border-r-2 border-ink px-6 py-3 text-center text-sm font-extrabold">
+            {c.logo ? <img src={c.logo} alt={c.name} loading="lazy" class="h-9 w-auto" /> : c.name}
           </li>
         ))}
       </ul>
     </section>
   )}
 
-  <section class="container-x mt-20">
-    <div class="rounded-3xl bg-brand p-8 text-charcoal sm:p-12">
-      <h2 class="text-3xl sm:text-4xl">Ai un proiect în minte?</h2>
-      <p class="mt-2 max-w-xl font-medium">Spune-ne ce ai nevoie și revenim cu o ofertă. Ne poți suna direct la {site.phone}.</p>
-      <div class="mt-6 flex flex-wrap gap-3">
-        <a href="/contact#oferta" class="btn btn-dark">Cere ofertă</a>
-        <a href={site.phoneHref} class="btn border border-charcoal/30 hover:bg-charcoal/10">{site.phone}</a>
-      </div>
-    </div>
-  </section>
+  {testimonials.length > 0 && (
+    <section class="container-x mt-24">
+      <h2 class="display text-4xl sm:text-6xl">Ce spun <span class="text-brand">clienții</span></h2>
+      <ul class="mt-8 grid gap-6 md:grid-cols-3">
+        {testimonials.map((t) => (
+          <li class="border-2 border-ink p-6">
+            <p class="text-lg font-semibold">„{t.text}”</p>
+            <p class="mt-4 text-sm font-extrabold text-brand-dark">{t.author}{t.company ? `, ${t.company}` : ''}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
 </Base>

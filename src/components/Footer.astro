@@ -2,37 +2,50 @@
 import { getCategories, getSite } from '../lib/content';
 const categories = getCategories();
 const site = getSite();
+const onContact = Astro.url.pathname.startsWith('/contact');
 ---
-<footer class="mt-24 bg-charcoal text-white/80">
-  <div class="container-x grid gap-10 py-14 md:grid-cols-4">
-    <div>
-      <img src="/logo.webp" alt="24 Plus Media" width="360" height="222" class="h-14 w-auto" loading="lazy" />
-      <p class="mt-4 text-sm">Producție publicitară, de la design la montaj.</p>
+<footer class="relative mt-24 overflow-hidden bg-ink text-white">
+  <span aria-hidden="true" class="pointer-events-none absolute -right-6 top-6 select-none text-[22rem] font-extrabold leading-none tracking-[-0.08em] text-transparent opacity-60 [-webkit-text-stroke:2px_var(--color-brand)] max-lg:hidden">24+</span>
+  <div class="container-x relative py-20">
+    {!onContact && (
+      <div class="border-b border-white/20 pb-16">
+        <h2 class="display text-5xl sm:text-7xl lg:text-8xl">Hai să <span class="text-brand">discutăm</span><br />proiectul tău.</h2>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="/contact#oferta" class="btn btn-primary">Cere ofertă →</a>
+          <a href={site.phoneHref} class="btn btn-ghost">{site.phone}</a>
+        </div>
+      </div>
+    )}
+    <div class="grid gap-10 pt-14 md:grid-cols-4">
+      <div>
+        <img src="/logo.webp" alt="24 Plus Media" width="440" height="271" class="h-14 w-auto rounded-md" loading="lazy" />
+        <p class="mt-4 text-sm text-white/70">Producție publicitară, de la design la montaj.</p>
+      </div>
+      <div>
+        <h3 class="text-xs font-extrabold uppercase tracking-[0.18em] text-brand">Servicii</h3>
+        <ul class="mt-3 space-y-2 text-sm">
+          {categories.map((c) => <li><a class="hover:text-brand" href={`/servicii/${c.slug}`}>{c.title}</a></li>)}
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-xs font-extrabold uppercase tracking-[0.18em] text-brand">Companie</h3>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li><a class="hover:text-brand" href="/portofoliu">Portofoliu</a></li>
+          <li><a class="hover:text-brand" href="/clienti">Clienți</a></li>
+          <li><a class="hover:text-brand" href="/contact">Contact</a></li>
+          <li><a class="hover:text-brand" href="/politica-confidentialitate">Confidențialitate</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-xs font-extrabold uppercase tracking-[0.18em] text-brand">Contact</h3>
+        <address class="mt-3 space-y-2 text-sm not-italic">
+          <p>{site.address}</p>
+          <p><a class="hover:text-brand" href={site.phoneHref}>{site.phone}</a></p>
+          <p><a class="hover:text-brand" href={`mailto:${site.email}`}>{site.email}</a></p>
+          {site.facebook && <p><a class="hover:text-brand" href={site.facebook} rel="noopener" target="_blank">Facebook</a></p>}
+        </address>
+      </div>
     </div>
-    <div>
-      <h2 class="text-sm font-bold uppercase tracking-widest text-white">Servicii</h2>
-      <ul class="mt-3 space-y-2 text-sm">
-        {categories.map((c) => <li><a class="hover:text-brand" href={`/servicii/${c.slug}`}>{c.title}</a></li>)}
-      </ul>
-    </div>
-    <div>
-      <h2 class="text-sm font-bold uppercase tracking-widest text-white">Companie</h2>
-      <ul class="mt-3 space-y-2 text-sm">
-        <li><a class="hover:text-brand" href="/portofoliu">Portofoliu</a></li>
-        <li><a class="hover:text-brand" href="/clienti">Clienți</a></li>
-        <li><a class="hover:text-brand" href="/contact">Contact</a></li>
-        <li><a class="hover:text-brand" href="/politica-confidentialitate">Confidențialitate</a></li>
-      </ul>
-    </div>
-    <div>
-      <h2 class="text-sm font-bold uppercase tracking-widest text-white">Contact</h2>
-      <address class="mt-3 space-y-2 text-sm not-italic">
-        <p>{site.address}</p>
-        <p><a class="hover:text-brand" href={site.phoneHref}>{site.phone}</a></p>
-        <p><a class="hover:text-brand" href={`mailto:${site.email}`}>{site.email}</a></p>
-        <p><a class="hover:text-brand" href={site.facebook} rel="noopener" target="_blank">Facebook</a></p>
-      </address>
-    </div>
+    <p class="mt-14 text-xs text-white/50">© {new Date().getFullYear()} {site.name}. Toate drepturile rezervate.</p>
   </div>
-  <div class="border-t border-white/10 py-5 text-center text-xs text-white/50">© {new Date().getFullYear()} {site.name}. Toate drepturile rezervate.</div>
 </footer>
