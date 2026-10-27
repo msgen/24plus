@@ -5,7 +5,7 @@ import { msg } from '../../lib/admin';
 if (Astro.request.method === 'POST') {
   const f = await Astro.request.formData();
   const id = String(f.get('id')); const action = String(f.get('action'));
-  update('leads', (l) => {
+  await update('leads', (l) => {
     const i = l.findIndex((x) => x.id === id);
     if (i < 0) return;
     if (action === 'delete') l.splice(i, 1);
@@ -13,7 +13,7 @@ if (Astro.request.method === 'POST') {
   });
   return Astro.redirect(msg('/admin/cereri', 'Actualizat.'));
 }
-const leads = read('leads');
+const leads = (await read('leads'));
 ---
 <Admin title="Cereri de ofertă">
   {leads.length === 0 && <p class="text-mute">Nu ai primit cereri încă.</p>}

@@ -19,32 +19,32 @@ npm run dev                             # site: http://localhost:4321   admin: /
 | Cereri ofertă | see quote requests from the website form, mark as done, delete |
 | Setări | phone, e-mail, address, Facebook, home page title/subtitle/"Despre noi", change password |
 
-Changes appear on the site immediately (no rebuild).
+Changes appear on the site immediately (no rebuild). *Setări → Descarcă backup* exports the data as JSON.
 
 ## Deploy
-Needs a host that runs Node 22.22+. **cPanel: see [DEPLOY-CPANEL.md](DEPLOY-CPANEL.md)** (`npm run package` builds the upload). A small VPS works too:
+**Vercel (chosen): see [DEPLOY-VERCEL.md](DEPLOY-VERCEL.md).** Data goes to Upstash Redis, photos to Vercel Blob.
 
-**Docker (simplest on a VPS)**
+Any Node 22.22+ host also works (VPS, Docker): without the Redis/Blob variables everything is stored in `DATA_DIR`.
 ```
 docker build -t 24plus .
 docker run -d --name 24plus --restart unless-stopped -p 4321:4321 -v 24plus-data:/data \
-  -e SITE_URL=https://24plus.ro --env-file .env 24plus
+  -e SITE_URL=https://24plus.ro -e SESSION_SECRET=$(openssl rand -hex 32) 24plus
 docker exec -it 24plus node scripts/user-add.mjs you@24plus.ro "Nume" "parola-lunga"
 ```
-**Without Docker:** `npm ci && npm run build`, then run `node dist/server/entry.mjs` under pm2/systemd with the env vars from `.env.example`, behind nginx/Caddy for HTTPS (the proxy must send `X-Forwarded-Proto: https` so the login cookie is marked Secure).
-
-**Backups:** copy the whole `DATA_DIR` (JSON + `uploads/`). That is the entire state of the site. Restore = put it back.
+Shared cPanel hosting without Node cannot run this app.
 
 ## Layout
-- `src/lib/store.ts` file store (atomic writes, mtime cache). First run seeds from `src/data/*.json`.
+- `src/lib/store.ts` async store: Upstash Redis when configured, JSON files otherwise. First run seeds from `src/data/*.json`.
+- `src/middleware.ts` loads one content snapshot per request (`snapshot-context.ts`) so templates read content synchronously; also the cross-site POST check.
 - `src/lib/auth.ts` scrypt passwords, HMAC-signed httpOnly/SameSite=Strict cookie, login/quote rate limits. `security.checkOrigin` rejects cross-site form POSTs.
-- `src/lib/images.ts` decodes + re-encodes every upload with sharp (strips metadata, rejects non-images, 15 MB cap).
+- `src/lib/images.ts` decodes + re-encodes every upload with sharp (strips metadata, rejects non-images, 15 MB cap) and stores to Vercel Blob or `DATA_DIR/uploads`.
+- `public/admin.js` shrinks photos in the browser and uploads them one by one (serverless body limit).
 - `src/lib/content.ts` read side for the public pages.
 - `src/pages/admin/*` the CMS screens. `src/pages/api/quote.ts` the public form endpoint.
 - `scripts/import.mjs` one-off import from `../old` (backup SQL + photos); `scripts/copy.ro.json` rewritten service text.
 
 ## Known limits / next steps
-- Single in-process store: run one instance. Moving to SQLite/Postgres only touches `store.ts`.
+- Read-modify-write is serialised per process only. Fine for a few editors; move to a real database if that changes (only `store.ts` needs to change).
 - Photos from the old DB (118 portfolio files, 13 client logos) were never delivered; add them via Portofoliu / Clienți.
 - Privacy page text is a placeholder; no analytics or cookie banner yet.
 - The `/uploads` route reads files into memory; fine at this size, add a CDN if traffic grows.

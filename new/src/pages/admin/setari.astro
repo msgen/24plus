@@ -11,17 +11,17 @@ if (Astro.request.method === 'POST') {
     const next = String(f.get('new') ?? '');
     if (!verifyPassword(String(f.get('current') ?? ''), user.hash)) return Astro.redirect(msg('/admin/setari', 'Parola curentă este greșită.', 'err'));
     if (next.length < 10) return Astro.redirect(msg('/admin/setari', 'Parola nouă trebuie să aibă minim 10 caractere.', 'err'));
-    setPassword(user.id, next);
+    await setPassword(user.id, next);
     return Astro.redirect(msg('/admin/setari', 'Parola a fost schimbată.'));
   }
-  update('settings', (s) => {
+  await update('settings', (s) => {
     s.phone = str(f, 'phone', 30) || s.phone; s.email = str(f, 'email', 100) || s.email; s.address = str(f, 'address', 200) || s.address;
     s.facebook = str(f, 'facebook', 200); s.heroTitle = str(f, 'heroTitle', 120) || s.heroTitle; s.heroSubtitle = str(f, 'heroSubtitle', 300);
     s.intro = str(f, 'intro', 3000).split(/\n\s*\n/).map((p) => p.replace(/\s+/g, ' ').trim()).filter(Boolean);
   });
   return Astro.redirect(msg('/admin/setari', 'Setări salvate.'));
 }
-const s = read('settings');
+const s = (await read('settings'));
 ---
 <Admin title="Setări">
   <form method="post" class="card max-w-3xl space-y-4">
@@ -37,6 +37,12 @@ const s = read('settings');
     <label class="label">Text „Despre noi” (paragrafe separate prin rând gol)<textarea class="field" name="intro" rows="8">{s.intro.join('\n\n')}</textarea></label>
     <button class="btn btn-primary btn-sm">Salvează</button>
   </form>
+
+  <section class="card mt-8 max-w-md space-y-2">
+    <h2 class="text-lg">Copie de siguranță</h2>
+    <p class="text-sm text-mute">Descarcă textele, serviciile, clienții, lista de fotografii și cererile primite. Fotografiile în sine rămân stocate separat.</p>
+    <a href="/admin/export.json" class="btn btn-dark btn-sm">Descarcă backup</a>
+  </section>
 
   <form method="post" class="card mt-8 max-w-md space-y-3">
     <h2 class="text-lg">Schimbă parola</h2>

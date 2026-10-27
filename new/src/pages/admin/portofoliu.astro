@@ -6,7 +6,7 @@ import { str, bool, files, msg } from '../../lib/admin';
 
 const filter = Astro.url.searchParams.get('service') ?? '';
 const back = filter ? `/admin/portofoliu?service=${encodeURIComponent(filter)}` : '/admin/portofoliu';
-const services = read('services').sort((a, b) => a.order - b.order);
+const services = (await read('services')).sort((a, b) => a.order - b.order);
 
 if (Astro.request.method === 'POST') {
   const f = await Astro.request.formData();
@@ -19,17 +19,17 @@ if (Astro.request.method === 'POST') {
       try { added.push({ id: newId(), service, ...(await saveImage(file)), alt: str(f, 'alt', 150) || undefined, featured: bool(f, 'featured') || undefined, createdAt: new Date().toISOString() }); }
       catch (e) { errors.push((e as Error).message); }
     }
-    if (added.length) update('projects', (p) => { p.unshift(...added); });
+    if (added.length) await update('projects', (p) => { p.unshift(...added); });
     return Astro.redirect(errors.length ? msg(back, errors.join(' '), 'err') : msg(back, `${added.length} fotografii adăugate.`));
   }
   const id = str(f, 'id');
   if (action === 'delete') {
-    const p = read('projects').find((x) => x.id === id);
-    if (p) { update('projects', (all) => all.filter((x) => x.id !== id)); removeUpload(p.thumb); if (p.full !== p.thumb) removeUpload(p.full); }
+    const p = (await read('projects')).find((x) => x.id === id);
+    if (p) { await update('projects', (all) => all.filter((x) => x.id !== id)); await removeUpload(p.thumb); if (p.full !== p.thumb) await removeUpload(p.full); }
     return Astro.redirect(msg(back, 'Fotografie ștearsă.'));
   }
   if (action === 'save') {
-    update('projects', (all) => {
+    await update('projects', (all) => {
       const p = all.find((x) => x.id === id); if (!p) return;
       const svc = str(f, 'service'); if (services.some((s) => s.slug === svc)) p.service = svc;
       p.alt = str(f, 'alt', 150) || undefined; p.featured = bool(f, 'featured') || undefined;
@@ -37,11 +37,11 @@ if (Astro.request.method === 'POST') {
     return Astro.redirect(msg(back, 'Salvat.'));
   }
 }
-const all = read('projects');
+const all = (await read('projects'));
 const projects = filter ? all.filter((p) => p.service === filter) : all;
 ---
 <Admin title="Portofoliu">
-  <form method="post" enctype="multipart/form-data" class="card max-w-3xl space-y-4">
+  <form method="post" enctype="multipart/form-data" class="card max-w-3xl space-y-4" data-resize="images" data-back={back}>
     <h2 class="text-lg">Adaugă fotografii</h2>
     <input type="hidden" name="action" value="upload" />
     <div class="grid gap-4 sm:grid-cols-2">
@@ -54,6 +54,7 @@ const projects = filter ? all.filter((p) => p.service === filter) : all;
     <label class="label">Descriere imagine (opțional, pentru accesibilitate și Google)<input class="field" name="alt" maxlength="150" /></label>
     <label class="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" name="featured" class="h-4 w-4" /> Afișează pe prima pagină</label>
     <button class="btn btn-primary btn-sm">Încarcă</button>
+    <p data-progress role="status" class="text-sm font-semibold"></p>
   </form>
 
   <div class="mt-8 flex flex-wrap items-center gap-2 text-sm">

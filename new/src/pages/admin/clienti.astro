@@ -14,22 +14,22 @@ if (Astro.request.method === 'POST') {
       const name = str(f, 'name', 100); if (!name) throw new Error('Numele este obligatoriu.');
       const logo = files(f, 'logo')[0];
       const saved = logo ? await saveImage(logo, { thumb: false, width: 400 }) : null;
-      update('clients', (c) => { c.push({ id: Math.max(0, ...c.map((x) => x.id)) + 1, name, url: cleanUrl(str(f, 'url', 200)), logo: saved?.full ?? null }); });
+      await update('clients', (c) => { c.push({ id: Math.max(0, ...c.map((x) => x.id)) + 1, name, url: cleanUrl(str(f, 'url', 200)), logo: saved?.full ?? null }); });
     } else if (action === 'save') {
       const logo = files(f, 'logo')[0];
       const saved = logo ? await saveImage(logo, { thumb: false, width: 400 }) : null;
       let old: string | null | undefined;
-      update('clients', (c) => { const x = c.find((k) => k.id === id); if (!x) return; x.name = str(f, 'name', 100) || x.name; x.url = cleanUrl(str(f, 'url', 200)); if (saved) { old = x.logo; x.logo = saved.full; } });
-      removeUpload(old);
+      await update('clients', (c) => { const x = c.find((k) => k.id === id); if (!x) return; x.name = str(f, 'name', 100) || x.name; x.url = cleanUrl(str(f, 'url', 200)); if (saved) { old = x.logo; x.logo = saved.full; } });
+      await removeUpload(old);
     } else if (action === 'delete') {
       let old: string | null | undefined;
-      update('clients', (c) => { const x = c.find((k) => k.id === id); old = x?.logo; return c.filter((k) => k.id !== id); });
-      removeUpload(old);
+      await update('clients', (c) => { const x = c.find((k) => k.id === id); old = x?.logo; return c.filter((k) => k.id !== id); });
+      await removeUpload(old);
     }
   } catch (e) { return Astro.redirect(msg('/admin/clienti', (e as Error).message, 'err')); }
   return Astro.redirect(msg('/admin/clienti', 'Salvat.'));
 }
-const clients = read('clients');
+const clients = (await read('clients'));
 ---
 <Admin title="Clienți">
   <form method="post" enctype="multipart/form-data" class="card max-w-3xl space-y-3">

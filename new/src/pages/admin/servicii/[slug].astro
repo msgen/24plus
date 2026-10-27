@@ -4,23 +4,24 @@ import { read, update } from '../../../lib/store';
 import { str, bool, msg } from '../../../lib/admin';
 
 const slug = Astro.params.slug!;
-const found = read('services').find((s) => s.slug === slug);
+const categories = await read('categories');
+const found = (await read('services')).find((s) => s.slug === slug);
 if (!found) return Astro.redirect(msg('/admin/servicii', 'Serviciul nu există.', 'err'));
 
 if (Astro.request.method === 'POST') {
   const f = await Astro.request.formData();
   if (str(f, 'action') === 'delete') {
-    update('services', (s) => s.filter((x) => x.slug !== slug));
+    await update('services', (s) => s.filter((x) => x.slug !== slug));
     return Astro.redirect(msg('/admin/servicii', 'Serviciu șters.'));
   }
   const category = str(f, 'category');
   const paragraphs = str(f, 'paragraphs', 8000).split(/\n\s*\n/).map((p) => p.replace(/\s+/g, ' ').trim()).filter(Boolean);
   const publish = bool(f, 'published');
   if (publish && paragraphs.length === 0) return Astro.redirect(msg(Astro.url.pathname, 'Adaugă text înainte de publicare.', 'err'));
-  update('services', (all) => {
+  await update('services', (all) => {
     const s = all.find((x) => x.slug === slug)!;
     s.title = str(f, 'title', 100) || s.title;
-    if (read('categories').some((c) => c.slug === category)) s.category = category;
+    if (categories.some((c) => c.slug === category)) s.category = category;
     s.excerpt = str(f, 'excerpt', 200);
     s.paragraphs = paragraphs;
     s.order = Number(f.get('order')) || s.order;
@@ -30,7 +31,6 @@ if (Astro.request.method === 'POST') {
   return Astro.redirect(msg(Astro.url.pathname, 'Salvat.'));
 }
 const s = found;
-const categories = read('categories');
 ---
 <Admin title={s.title}>
   <p class="mb-4 text-sm"><a href="/admin/servicii" class="text-brand-dark hover:underline">← Toate serviciile</a>{!s.hidden && <> · <a class="text-brand-dark hover:underline" href={`/servicii/${s.category}/${s.slug}`} target="_blank">Vezi pe site ↗</a></>}</p>

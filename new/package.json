@@ -9,13 +9,15 @@
     "preview": "astro preview",
     "check": "astro check",
     "start": "node dist/server/entry.mjs",
-    "user:add": "node scripts/user-add.mjs",
-    "package": "node scripts/package.mjs"
+    "user:add": "node scripts/user-add.mjs"
   },
   "dependencies": {
     "@astrojs/node": "^11.1.9",
+    "@astrojs/vercel": "^11.0.16",
     "@fontsource-variable/manrope": "^5.3.0",
     "@tailwindcss/vite": "^4.3.3",
+    "@upstash/redis": "^1.40.0",
+    "@vercel/blob": "^2.8.2",
     "astro": "^7.4.1",
     "nodemailer": "^10.2.1",
     "sharp": "^0.35.5",

@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import node from '@astrojs/node';
+import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
 import services from './src/data/services.json' with { type: 'json' };
 
@@ -12,9 +13,9 @@ redirects['/revista'] = '/';
 export default defineConfig({
   site: 'https://24plus.ro',
   output: 'server',
-  adapter: node({ mode: 'standalone' }),
-  // Origin check is done in src/middleware.ts (host-only compare) because Apache/Passenger on cPanel
-  // often does not forward the original protocol, which breaks Astro's built-in check.
+  // Vercel sets VERCEL=1 during builds; everywhere else (local, Docker, VPS) use the plain Node server.
+  adapter: process.env.VERCEL ? vercel() : node({ mode: 'standalone' }),
+  // Origin check is done in src/middleware.ts (host-only compare); proxies often hide the original protocol.
   security: { checkOrigin: false },
   redirects,
   vite: { plugins: [tailwindcss()] },

@@ -1,13 +1,13 @@
 ---
 import Admin from '../../layouts/Admin.astro';
 import { read } from '../../lib/store';
-const leads = read('leads');
+const leads = (await read('leads'));
 const fresh = leads.filter((l) => l.status === 'nou');
 const stats = [
-  ['Cereri noi', fresh.length, '/admin/cereri'], ['Servicii publicate', read('services').filter((s) => !s.hidden).length, '/admin/servicii'],
-  ['Fotografii', read('projects').length, '/admin/portofoliu'], ['Clienți', read('clients').length, '/admin/clienti'],
+  ['Cereri noi', fresh.length, '/admin/cereri'], ['Servicii publicate', (await read('services')).filter((s) => !s.hidden).length, '/admin/servicii'],
+  ['Fotografii', (await read('projects')).length, '/admin/portofoliu'], ['Clienți', (await read('clients')).length, '/admin/clienti'],
 ];
-const draft = read('services').filter((s) => s.hidden);
+const draft = (await read('services')).filter((s) => s.hidden);
 ---
 <Admin title="Panou">
   <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

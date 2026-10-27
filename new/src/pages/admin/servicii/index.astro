@@ -6,15 +6,15 @@ import { slugify, str, msg } from '../../../lib/admin';
 if (Astro.request.method === 'POST') {
   const f = await Astro.request.formData();
   const title = str(f, 'title', 100); const category = str(f, 'category');
-  if (!title || !read('categories').some((c) => c.slug === category)) return Astro.redirect(msg('/admin/servicii', 'Completează titlul și categoria.', 'err'));
+  if (!title || !(await read('categories')).some((c) => c.slug === category)) return Astro.redirect(msg('/admin/servicii', 'Completează titlul și categoria.', 'err'));
   let slug = slugify(title);
-  const taken = new Set(read('services').map((s) => s.slug));
+  const taken = new Set((await read('services')).map((s) => s.slug));
   for (let i = 2; taken.has(slug); i++) slug = `${slugify(title)}-${i}`;
-  update('services', (s) => { s.push({ slug, category, title, order: Math.max(0, ...s.map((x) => x.order)) + 1, excerpt: '', paragraphs: [], hidden: true }); });
+  await update('services', (s) => { s.push({ slug, category, title, order: Math.max(0, ...s.map((x) => x.order)) + 1, excerpt: '', paragraphs: [], hidden: true }); });
   return Astro.redirect(`/admin/servicii/${slug}?ok=${encodeURIComponent('Serviciu creat. Adaugă textul și publică-l.')}`);
 }
-const categories = read('categories');
-const services = read('services').sort((a, b) => a.order - b.order);
+const categories = (await read('categories'));
+const services = (await read('services')).sort((a, b) => a.order - b.order);
 ---
 <Admin title="Servicii">
   {categories.map((c) => (

@@ -2,18 +2,24 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { AstroCookies } from 'astro';
-import { DATA_DIR, read, update, newId, type User } from './store';
+import { DATA_DIR, read, update, newId, hit, onVercel, usingRedis, type User } from './store';
 
 const secret = (() => {
   if (process.env.SESSION_SECRET) return process.env.SESSION_SECRET;
-  const f = path.join(DATA_DIR, '.secret');
+  if (onVercel || process.env.NODE_ENV === 'production' && usingRedis) throw new Error('SESSION_SECRET must be set.');
+  const f = path.join(DATA_DIR, '.secret'); // local/VPS convenience: generated once
   if (!fs.existsSync(f)) fs.writeFileSync(f, crypto.randomBytes(32).toString('hex'), { mode: 0o600 });
   return fs.readFileSync(f, 'utf8');
 })();
 
-// First start on hosts without a terminal (cPanel): create the admin from env vars if no user exists yet.
-if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD && process.env.ADMIN_PASSWORD.length >= 10 && read('users').length === 0) {
-  update('users', (u) => { u.push({ id: newId(), email: process.env.ADMIN_EMAIL!.toLowerCase(), name: process.env.ADMIN_NAME ?? 'Admin', hash: hashPassword(process.env.ADMIN_PASSWORD!) }); });
+// First start (no terminal needed): create the admin from env vars if no user exists yet.
+let bootstrapped = false;
+export async function ensureAdmin() {
+  if (bootstrapped) return;
+  bootstrapped = true;
+  const { ADMIN_EMAIL: email, ADMIN_PASSWORD: pw, ADMIN_NAME: name } = process.env;
+  if (!email || !pw || pw.length < 10) return;
+  await update('users', (u) => { if (u.length === 0) u.push({ id: newId(), email: email.toLowerCase(), name: name ?? 'Admin', hash: hashPassword(pw) }); });
 }
 
 const COOKIE = '24plus_session';
@@ -34,19 +40,20 @@ export function verifyPassword(pw: string, stored: string) {
 
 const sign = (v: string) => crypto.createHmac('sha256', secret).update(v).digest('hex');
 
-export function createUser(email: string, name: string, password: string) {
-  update('users', (users) => {
+export async function createUser(email: string, name: string, password: string) {
+  await update('users', (users) => {
     if (users.some((u) => u.email === email.toLowerCase())) throw new Error('Utilizatorul există deja.');
     users.push({ id: newId(), email: email.toLowerCase(), name, hash: hashPassword(password) });
   });
 }
 
-export function setPassword(userId: string, password: string) {
-  update('users', (users) => { const u = users.find((x) => x.id === userId); if (u) u.hash = hashPassword(password); });
+export async function setPassword(userId: string, password: string) {
+  await update('users', (users) => { const u = users.find((x) => x.id === userId); if (u) u.hash = hashPassword(password); });
 }
 
-export function login(email: string, password: string): User | null {
-  const u = read('users').find((x) => x.email === email.trim().toLowerCase());
+export async function login(email: string, password: string): Promise<User | null> {
+  await ensureAdmin();
+  const u = (await read('users')).find((x) => x.email === email.trim().toLowerCase());
   // run a hash either way so response time does not reveal whether the account exists
   const ok = verifyPassword(password, u?.hash ?? 'scrypt$00$00');
   return u && ok ? u : null;
@@ -61,7 +68,7 @@ export function startSession(cookies: AstroCookies, user: User, secure: boolean)
 }
 export const endSession = (cookies: AstroCookies) => cookies.delete(COOKIE, { path: '/' });
 
-export function currentUser(cookies: AstroCookies): User | null {
+export async function currentUser(cookies: AstroCookies): Promise<User | null> {
   const raw = cookies.get(COOKIE)?.value;
   if (!raw) return null;
   const [id, exp, mac] = raw.split('.');
@@ -69,15 +76,10 @@ export function currentUser(cookies: AstroCookies): User | null {
   const good = sign(`${id}.${exp}`);
   if (mac.length !== good.length || !crypto.timingSafeEqual(Buffer.from(mac), Buffer.from(good))) return null;
   if (Number(exp) < Date.now() / 1000) return null;
-  return read('users').find((u) => u.id === id) ?? null;
+  return (await read('users')).find((u) => u.id === id) ?? null;
 }
 
-// Naive in-memory limiter (per process): enough to slow password guessing and form spam.
-const hits = new Map<string, number[]>();
-export function tooMany(key: string, max: number, windowMs: number) {
-  const now = Date.now();
-  const list = (hits.get(key) ?? []).filter((t) => now - t < windowMs);
-  list.push(now);
-  hits.set(key, list);
-  return list.length > max;
+// Rate limit (Redis-backed on Vercel, in-memory locally). True = limit exceeded.
+export async function tooMany(key: string, max: number, windowMs: number) {
+  return (await hit(key, Math.ceil(windowMs / 1000))) > max;
 }

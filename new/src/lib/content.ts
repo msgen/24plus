@@ -1,9 +1,10 @@
-// Read side used by the public pages. Data comes from the CMS store (see store.ts).
-import { read, type Category, type Service, type Project, type Client } from './store';
+// Read side used by the public pages. Data comes from the per-request snapshot (see snapshot-context.ts).
+import { current } from './snapshot-context';
+import type { Category, Service, Project, Client } from './store';
 export type { Category, Service, Project, Client };
 
 export function getSite() {
-  const s = read('settings');
+  const s = current().settings;
   const digits = s.phone.replace(/[^\d+]/g, '').replace(/^0/, '+40');
   return {
     ...s,
@@ -15,11 +16,11 @@ export function getSite() {
   };
 }
 
-export const getCategories = () => read('categories');
-export const getClients = () => read('clients');
-export const getProjects = () => read('projects');
-export const getTestimonials = () => read('testimonials');
-export const getServices = () => read('services').filter((s) => !s.hidden).sort((a, b) => a.order - b.order);
+export const getCategories = () => current().categories;
+export const getClients = () => current().clients;
+export const getProjects = () => current().projects;
+export const getTestimonials = () => current().testimonials;
+export const getServices = () => current().services.filter((s) => !s.hidden).sort((a, b) => a.order - b.order);
 
 export const servicesIn = (category: string) => getServices().filter((s) => s.category === category);
 export const serviceBySlug = (slug: string) => getServices().find((s) => s.slug === slug);

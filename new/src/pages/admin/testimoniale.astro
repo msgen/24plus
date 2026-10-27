@@ -9,13 +9,13 @@ if (Astro.request.method === 'POST') {
   if (action === 'add') {
     const author = str(f, 'author', 100); const text = str(f, 'text', 800);
     if (!author || !text) return Astro.redirect(msg('/admin/testimoniale', 'Completează numele și textul.', 'err'));
-    update('testimonials', (t) => { t.push({ id: newId(), author, company: str(f, 'company', 100) || undefined, text }); });
+    await update('testimonials', (t) => { t.push({ id: newId(), author, company: str(f, 'company', 100) || undefined, text }); });
   } else if (action === 'save') {
-    update('testimonials', (t) => { const x = t.find((k) => k.id === id); if (x) { x.author = str(f, 'author', 100) || x.author; x.company = str(f, 'company', 100) || undefined; x.text = str(f, 'text', 800) || x.text; } });
-  } else if (action === 'delete') update('testimonials', (t) => t.filter((k) => k.id !== id));
+    await update('testimonials', (t) => { const x = t.find((k) => k.id === id); if (x) { x.author = str(f, 'author', 100) || x.author; x.company = str(f, 'company', 100) || undefined; x.text = str(f, 'text', 800) || x.text; } });
+  } else if (action === 'delete') await update('testimonials', (t) => t.filter((k) => k.id !== id));
   return Astro.redirect(msg('/admin/testimoniale', 'Salvat.'));
 }
-const items = read('testimonials');
+const items = (await read('testimonials'));
 ---
 <Admin title="Testimoniale">
   <p class="mb-4 max-w-2xl text-sm text-mute">Secțiunea apare pe prima pagină doar dacă există cel puțin un testimonial.</p>
