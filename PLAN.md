@@ -19,27 +19,33 @@ Based on a review of `old/` in `msgen/24plus` (read 2026-10-26).
 | Printuri mari | autocolante, bannere, print afise mari, tablouri canvas, fototapet |
 | Print digital | flyere si pliante, afise, carti de vizita, cataloage si brosuri, mape de prezentare, calendare, etichete autocolante (foi cu antet, felicitari and ecusoane are commented out) |
 | Obiecte promotionale | tricouri, pixuri, brelocuri, brichete, magneti frigider, rollup-uri, alte obiecte promotionale |
-| Other | Home (hero slider, intro text, promoted gallery, clients, testimonials, contact), Portofoliu (by client), Clienti, Revista 24 plus (menu link only, no page code), Contact |
+| Other | Home (hero slider, intro text, promoted gallery, clients, testimonials, contact), Portofoliu (by client), Clienti, Contact. "Revista 24 plus" was a menu link with no page behind it, and is dropped. |
 
 **Home copy to keep (Romanian):** the three-paragraph "24 Plus Media este o firma de productie publicitara..." intro. It covers production of advertising materials, vehicle and shopfront branding, signage, large-format print, digital print and promotional items. It also describes the service as full-cycle: design, advice, production, assembly, installation and logistics.
 
 ## 2. What is actually reusable
 
-The DB dumps are placeholder data: 1 entity ("O descriere superficiala"), 4 fake clients ("nume1"), 4 test testimonials and 1 portfolio row. **The real content lives in the production database, which is not in this repo.**
+**Update 2026-10-27:** the production export is in `old/database/backup/` (client, entity, portofolio, testimonial, user, plus a CSV). The earlier `old/database/*.sql` dumps are placeholder data and are ignored.
 
-What is in the repo:
-- `old/utile/`: about 100 curated project photos in 10 folders, 245 MB (litere volumetrice 29, colantari auto 17, canvas 17, casete luminoase 12, roll-up 8, vitrine 5, candy bar 5, totem 3, homepage 3, logo and latest 3).
-- `old/assets/img/gallery/`: 92 gallery files, some of them thumbnails.
-- The template (Bootstrap theme) images in `assets/img/*`, such as courses, blog and events, are stock demo assets and will be dropped.
-- `utile/Canvas/` contains stock or web-sourced images (for example "res_..._full.jpg", the Golden Gate canvas). Check the usage rights before reusing any of them.
-- The old logo (`assets/img/logo.jpg`, `logo.gif`) is low-resolution and needs a vector redraw.
+**Real content found in the backup:**
+- **Services (`entity`): 34 rows.** 21 have real Romanian copy. 10 are just the text "test" (gravura computerizata, panouri publicitare, pliante, foi cu antet, felicitari, ecusoane, obiecte promotionale, alte obiecte promotionale, plus duplicates). Some texts have broken diacritics (`?`) and stray HTML. These texts need cleanup and new copy.
+- **Portfolio: 118 images** tagged by service and client, 17 of them "promoted" to the homepage. Best covered: litere volumetrice (16), personalizari auto (12), tablouri canvas (12), casete luminoase (8), carti de vizita (8), tricouri (6).
+- **Clients: 13** with name, website and logo (Roman's, Grand Imperial Deluxe, Zoomserie, Emigab, Luxury, Vilextur, Badcom, Filos, Amal Tour, Pensiunea NOEL, Profesional New Consult, O'livio, plus "Diversi" as a catch-all).
+- **Testimonials: only test text** ("test testimonial"), so there are no real ones to migrate. New ones must come from the owner.
 
-**Needed from the owner:**
-1. A production DB export, or a crawl of live 24plus.ro, for the real service descriptions, client logos and names, and testimonials.
-2. The original or high-res logo, and the brand colours if they exist.
-3. The photo originals and the usage rights.
-4. The Google Analytics, Search Console and domain-registrar access details.
-5. What "Revista 24 plus" is: a magazine, a blog, or a PDF catalogue.
+**Still missing:** the image files those 118 portfolio rows and 13 client logos point to (`gallery/Mese Candy Bar Rm Valcea.jpg` and so on). None of them is in the repo. The repo has 92 other gallery files and about 100 originals in `old/utile/`. The owner needs to download the production `assets/img/gallery/` folder from the server (cPanel File Manager, or FTP) and add it to the repo. Until then, the new site is prototyped with the `utile/` photos.
+
+**Other facts:**
+- The logo is a 960x960 JPEG: a green 3D "24", white 3D "PLUS" and grey "MEDIA" on charcoal. Vector tracing is needed for a clean header logo.
+- `utile/Canvas/` contains stock or web-sourced images, so check the rights before reuse.
+- The old theme's demo images (courses, blog, events) are dropped.
+- The `user` table (admin login) is not migrated. The new CMS has its own accounts.
+
+**Decisions made:**
+1. "Revista 24 plus" is dropped.
+2. Romanian only.
+3. A non-technical CMS.
+4. The logo is kept; the colours are refreshed (section 6).
 
 ## 3. Goals
 
@@ -54,7 +60,7 @@ What is in the repo:
 |---|---|---|
 | Framework | **Astro 5 + TypeScript** (islands for the few interactive parts) | A mostly content-driven site. It ships very little JavaScript, which gives excellent Core Web Vitals and SEO. Next.js is the alternative if you want one framework for everything. |
 | Styling | Tailwind CSS 4 + a small component library | Fast, consistent design system. |
-| Content / CMS | **Sanity** or **Decap/Tina** (git-based) for services, projects, clients and testimonials | Replaces the hand-made admin. Editors upload images and edit text safely. The git-based option needs no extra service, and Sanity gives the nicer editing UI. |
+| Content / CMS | **Sanity Studio** (hosted, free tier) for services, projects, clients and testimonials | Chosen for non-technical editing: a visual editor, drag-and-drop image upload, no code or git. It replaces the hand-made admin. A publish triggers an automatic site rebuild (about a minute). Fallback if the free tier is ever a problem: Storyblok or Payload CMS. |
 | Images | Astro Image / Cloudinary or Cloudflare Images | Auto WebP/AVIF, responsive sizes. This replaces 438 MB of raw JPEG. |
 | Forms | Quote-request form to a serverless function (Resend/Postmark email) with Turnstile spam protection | Replaces PHP `mail()`, which is unreliable and lands in spam. |
 | Hosting | Cloudflare Pages or Netlify/Vercel (static + edge functions) | Free or cheap tier, CDN, HTTPS and preview deploys per branch. |
@@ -75,7 +81,6 @@ Keep the Romanian URLs where they make sense so redirects stay simple.
 /portofoliu               Filterable project gallery (by service, by client)
 /portofoliu/[proiect]     Project detail
 /clienti                  Clients and testimonials
-/revista                  Decide: blog or a catalogue (see open questions)
 /contact                  Contact + quote request + map
 /politica-confidentialitate, /cookie, /termeni
 ```
@@ -87,11 +92,29 @@ Improvements over the old site:
 
 ## 6. UX and visual direction
 
-- Keep the brand's colourful identity (the old site uses a multi-colour bar: yellow, red, green, blue, purple and pink, one per category) but modernise it: a clean white or neutral base, one strong accent, and the category colours reserved for the four service areas.
-- Large photography-led hero, bento-style service grid, masonry portfolio with lightbox and category filters.
-- Clear type scale (a modern sans such as Inter or Manrope, a display face for headings), generous whitespace, subtle motion (respecting `prefers-reduced-motion`), dark mode optional.
-- Accessibility: WCAG 2.2 AA, keyboard navigation, alt text on every image (the old alt text is just the filename).
-- Romanian first; an English version later if wanted.
+**Logo:** keep it as is, vectorised. Its character is a bold green 3D "24" with white and grey letters on charcoal, which is a strong, modern sign-industry look.
+
+**Colour proposal.** The old site used six rainbow colours (yellow, red, green, blue, purple, pink), which has no relation to the logo and looks like a template. The new palette takes its colours from the logo:
+
+| Role | Colour | Hex |
+|---|---|---|
+| Brand green (buttons, links, accents) | Logo green | `#3FAE2A` |
+| Green, dark (hover, text on light) | | `#2C7F1D` |
+| Green, tint (backgrounds) | | `#EAF6E6` |
+| Charcoal (headers, footer, dark sections) | Logo background | `#262626` |
+| Ink (body text) | | `#1B1B1B` |
+| Grey (secondary text, borders) | Logo "MEDIA" | `#8A8A8A` / `#E5E5E5` |
+| Off-white (page background) | | `#FAFAF8` |
+| Highlight (one small accent: badges, "new", price hints) | Warm signal orange, as in sign lighting | `#FF7A1A` |
+
+The green reads well on charcoal (it is the logo pairing). On white it is borderline for small text, so body links use the dark green (`#2C7F1D`, contrast above 4.5:1). Four service categories are told apart by icon and label, not by four more colours.
+
+**Layout and style:**
+- A large photo-led hero (litere volumetrice at night is the strongest image), a bento-style grid for the four service areas, and a masonry portfolio with a lightbox and service filters.
+- A clean type scale: Manrope or Inter for text, with a heavier display weight for headings.
+- Subtle motion that respects `prefers-reduced-motion`. A dark footer and a dark "quote" band echo the logo.
+- Accessibility: WCAG 2.2 AA, keyboard navigation, real alt text (the old alt text was just filenames).
+- Romanian only. No language switcher.
 
 ## 7. Migration and SEO
 
@@ -123,21 +146,22 @@ Do not carry any of these over:
 
 Total: about 5-6 weeks of part-time work for one developer. Content availability from the owner is the main risk.
 
-## 10. Open questions for you
+## 10. Open questions
 
-1. Can you get me the **production DB export** and/or the live URL? Without them the real service text, clients and testimonials are missing.
-2. **Revista 24 plus**: what is it, and should it become a blog, a PDF catalogue, or be dropped?
-3. Do you want an **online shop or price calculator**, or only quote requests?
-4. **Languages:** Romanian only, or Romanian and English?
-5. Do you want the **CMS** to be non-technical (Sanity) or git-based (free, simpler)?
-6. **Branding:** keep the current logo and colours or refresh them?
-7. Who edits the site after launch, and how often?
-8. Who owns the hosting, domain and Google accounts?
-9. Rights to the photos in `utile/` (some look like stock or web images).
-10. Timeline and budget constraints?
+Answered: DB export (found in `old/database/backup`), Revista (dropped), languages (RO only), CMS (non-technical, Sanity), logo (keep).
+
+Still open:
+1. **The production images.** Please download `assets/img/gallery/` (and the client logos) from the live server and add them to the repo. None of the 118 portfolio files is in the repo yet.
+2. **Colour palette:** are you happy with the green + charcoal + orange accent in section 6?
+3. **Testimonials:** the DB only has test text. Do you have real client quotes, or should we skip the section until you do?
+4. **Quote form:** just a request form (name, phone, email, service, message, optional file), or also a price calculator?
+5. **Copy:** 10 services have only the text "test". Should I write the missing text (you review it), or hide those pages for now?
+6. **Photo rights** for the stock-looking images in `utile/Canvas/`.
+7. **Ownership:** domain, hosting and Google accounts.
+8. **Contact details** to confirm: Str. Gib Mihaescu nr. 14, 0745 537 715, contact@24plus.ro, opening hours, WhatsApp number.
 
 ## 11. Suggested next steps
 
-1. You answer the questions in section 10, mainly 1, 2, 4 and 5.
-2. I scaffold `new/` in this repo (Astro + Tailwind, CMS schema, sample pages from the real photos) so you can review a working preview.
-3. Together we pick the design direction, then I build out the remaining pages.
+1. You answer the open questions in section 10, mainly 1 (images) and 2 (colours).
+2. I scaffold `new/` in this repo: Astro + Tailwind, the Sanity schema, an import script for the backup tables, and sample pages built from the real photos.
+3. You review a working preview, and then I build out the remaining pages.
