@@ -1,0 +1,36 @@
+---
+import { categories, site } from '../lib/content';
+---
+<footer class="mt-24 bg-charcoal text-white/80">
+  <div class="container-x grid gap-10 py-14 md:grid-cols-4">
+    <div>
+      <img src="/logo.webp" alt="24 Plus Media" width="360" height="222" class="h-14 w-auto" loading="lazy" />
+      <p class="mt-4 text-sm">Producție publicitară, de la design la montaj.</p>
+    </div>
+    <div>
+      <h2 class="text-sm font-bold uppercase tracking-widest text-white">Servicii</h2>
+      <ul class="mt-3 space-y-2 text-sm">
+        {categories.map((c) => <li><a class="hover:text-brand" href={`/servicii/${c.slug}`}>{c.title}</a></li>)}
+      </ul>
+    </div>
+    <div>
+      <h2 class="text-sm font-bold uppercase tracking-widest text-white">Companie</h2>
+      <ul class="mt-3 space-y-2 text-sm">
+        <li><a class="hover:text-brand" href="/portofoliu">Portofoliu</a></li>
+        <li><a class="hover:text-brand" href="/clienti">Clienți</a></li>
+        <li><a class="hover:text-brand" href="/contact">Contact</a></li>
+        <li><a class="hover:text-brand" href="/politica-confidentialitate">Confidențialitate</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2 class="text-sm font-bold uppercase tracking-widest text-white">Contact</h2>
+      <address class="mt-3 space-y-2 text-sm not-italic">
+        <p>{site.address}</p>
+        <p><a class="hover:text-brand" href={site.phoneHref}>{site.phone}</a></p>
+        <p><a class="hover:text-brand" href={`mailto:${site.email}`}>{site.email}</a></p>
+        <p><a class="hover:text-brand" href={site.facebook} rel="noopener" target="_blank">Facebook</a></p>
+      </address>
+    </div>
+  </div>
+  <div class="border-t border-white/10 py-5 text-center text-xs text-white/50">© {new Date().getFullYear()} {site.name}. Toate drepturile rezervate.</div>
+</footer>

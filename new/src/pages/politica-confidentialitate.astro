@@ -1,0 +1,14 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../lib/content';
+---
+<Base title="Politica de confidențialitate" noindex>
+  <div class="container-x max-w-3xl pt-12">
+    <h1 class="text-4xl">Politica de confidențialitate</h1>
+    <div class="mt-6 space-y-4 text-mute">
+      <p>Acest text este un model provizoriu și trebuie revizuit și completat de operator (date de identificare, CUI, temei legal) înainte de lansare.</p>
+      <p>Folosim datele trimise prin formularul de ofertă (nume, telefon, e-mail, mesaj) doar pentru a răspunde solicitării tale. Nu le vindem și nu le oferim terților.</p>
+      <p>Poți cere accesul, corectarea sau ștergerea datelor scriindu-ne la <a class="font-bold text-brand-dark" href={`mailto:${site.email}`}>{site.email}</a>.</p>
+    </div>
+  </div>
+</Base>

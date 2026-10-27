@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro';
+import Gallery from '../components/Gallery.astro';
+import { projects, services, projectsFor } from '../lib/content';
+const filters = services.filter((s) => projectsFor(s.slug).length > 0);
+---
+<Base title="Portofoliu" description="Lucrări realizate de 24 Plus Media: litere volumetrice, firme luminoase, personalizări auto, vitrine și multe altele.">
+  <div class="container-x pt-12">
+    <p class="eyebrow">Portofoliu</p>
+    <h1 class="mt-2 text-4xl sm:text-5xl">Lucrările noastre</h1>
+    <div class="mt-8 flex flex-wrap gap-2" role="group" aria-label="Filtrează lucrările">
+      <button class="filter btn btn-dark" data-filter="all" aria-pressed="true">Toate</button>
+      {filters.map((s) => <button class="filter btn border border-line bg-white hover:bg-brand-tint" data-filter={s.slug} aria-pressed="false">{s.title}</button>)}
+    </div>
+    <div class="mt-8" id="grid">
+      <ul class="columns-2 gap-3 sm:columns-3 [&>li]:mb-3">
+        {projects.map((p) => (
+          <li class="break-inside-avoid" data-service={p.service}>
+            <button type="button" data-full={p.full} data-alt={p.service} class="block w-full overflow-hidden rounded-xl bg-line">
+              <img src={p.thumb} alt={`Lucrare ${p.service.replace(/-/g, ' ')}`} loading="lazy" width="640" height="480" class="w-full transition duration-500 hover:scale-105" />
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <dialog id="lightbox" class="m-auto max-h-[92vh] max-w-[94vw] rounded-xl bg-transparent p-0 backdrop:bg-black/85">
+      <form method="dialog"><button class="btn btn-primary absolute right-3 top-3">Închide</button></form>
+      <img id="lightbox-img" alt="" class="max-h-[92vh] max-w-[94vw] rounded-xl object-contain" />
+    </dialog>
+  </div>
+</Base>
+<script>
+  const box = document.getElementById('lightbox') as HTMLDialogElement;
+  const big = document.getElementById('lightbox-img') as HTMLImageElement;
+  document.querySelectorAll<HTMLButtonElement>('button[data-full]').forEach((b) =>
+    b.addEventListener('click', () => { big.src = b.dataset.full!; box.showModal(); }));
+  box.addEventListener('click', (e) => { if (e.target === box) box.close(); });
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.filter');
+  buttons.forEach((btn) => btn.addEventListener('click', () => {
+    const f = btn.dataset.filter;
+    buttons.forEach((b) => {
+      const on = b === btn;
+      b.setAttribute('aria-pressed', String(on));
+      b.classList.toggle('btn-dark', on);
+    });
+    document.querySelectorAll<HTMLElement>('#grid li').forEach((li) => { li.hidden = f !== 'all' && li.dataset.service !== f; });
+  }));
+</script>

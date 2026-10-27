@@ -1,0 +1,22 @@
+---
+import Base from '../../layouts/Base.astro';
+import ServiceCard from '../../components/ServiceCard.astro';
+import { categories, servicesIn } from '../../lib/content';
+---
+<Base title="Servicii" description="Toate serviciile 24 Plus Media: producție publicitară, printuri mari, print digital și obiecte promoționale.">
+  <div class="container-x pt-12">
+    <p class="eyebrow">Servicii</p>
+    <h1 class="mt-2 text-4xl sm:text-5xl">Tot ce ai nevoie pentru vizibilitate</h1>
+    {categories.map((c) => (
+      <section class="mt-14">
+        <div class="flex items-end justify-between gap-4">
+          <div><h2 class="text-2xl">{c.title}</h2><p class="mt-1 text-mute">{c.blurb}</p></div>
+          <a href={`/servicii/${c.slug}`} class="hidden text-sm font-bold text-brand-dark hover:underline sm:block">Vezi categoria →</a>
+        </div>
+        <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {servicesIn(c.slug).map((s) => <ServiceCard service={s} />)}
+        </div>
+      </section>
+    ))}
+  </div>
+</Base>

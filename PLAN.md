@@ -101,7 +101,7 @@ Improvements over the old site:
 | Brand green (buttons, links, accents) | Logo green | `#3FAE2A` |
 | Green, dark (hover, text on light) | | `#2C7F1D` |
 | Green, tint (backgrounds) | | `#EAF6E6` |
-| Charcoal (headers, footer, dark sections) | Logo background | `#262626` |
+| Charcoal (headers, footer, dark sections) | Logo background | `#2C2B27` |
 | Ink (body text) | | `#1B1B1B` |
 | Grey (secondary text, borders) | Logo "MEDIA" | `#8A8A8A` / `#E5E5E5` |
 | Off-white (page background) | | `#FAFAF8` |

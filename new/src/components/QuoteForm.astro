@@ -1,0 +1,56 @@
+---
+import { services, site } from '../lib/content';
+const { service = '' } = Astro.props as { service?: string };
+const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
+---
+<form id="quote" class="space-y-4 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-line" data-endpoint={endpoint} data-mailto={site.email} novalidate>
+  <div class="grid gap-4 sm:grid-cols-2">
+    <label class="block text-sm font-semibold">Nume
+      <input name="nume" required autocomplete="name" class="mt-1 w-full rounded-lg border border-line px-3 py-2.5 font-normal" />
+    </label>
+    <label class="block text-sm font-semibold">Telefon
+      <input name="telefon" required type="tel" autocomplete="tel" class="mt-1 w-full rounded-lg border border-line px-3 py-2.5 font-normal" />
+    </label>
+  </div>
+  <label class="block text-sm font-semibold">E-mail
+    <input name="email" type="email" autocomplete="email" class="mt-1 w-full rounded-lg border border-line px-3 py-2.5 font-normal" />
+  </label>
+  <label class="block text-sm font-semibold">Ce te interesează?
+    <select name="serviciu" class="mt-1 w-full rounded-lg border border-line bg-white px-3 py-2.5 font-normal">
+      <option value="">Alege un serviciu (opțional)</option>
+      {services.map((s) => <option value={s.title} selected={s.slug === service}>{s.title}</option>)}
+    </select>
+  </label>
+  <label class="block text-sm font-semibold">Detalii
+    <textarea name="mesaj" rows="4" required class="mt-1 w-full rounded-lg border border-line px-3 py-2.5 font-normal" placeholder="Dimensiuni, cantitate, termen..."></textarea>
+  </label>
+  <input name="website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
+  <p class="text-xs text-mute">Prin trimitere ești de acord cu <a class="underline" href="/politica-confidentialitate">politica de confidențialitate</a>.</p>
+  <button class="btn btn-primary w-full" type="submit">Trimite cererea</button>
+  <p id="quote-status" role="status" class="text-sm font-semibold"></p>
+</form>
+<script>
+  const form = document.getElementById('quote') as HTMLFormElement;
+  const status = document.getElementById('quote-status')!;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+    const data = Object.fromEntries(new FormData(form));
+    if (data.website) return; // honeypot
+    const { endpoint, mailto } = form.dataset;
+    if (!endpoint) {
+      const body = `Nume: ${data.nume}\nTelefon: ${data.telefon}\nE-mail: ${data.email}\nServiciu: ${data.serviciu}\n\n${data.mesaj}`;
+      location.href = `mailto:${mailto}?subject=${encodeURIComponent('Cerere ofertă 24plus.ro')}&body=${encodeURIComponent(body)}`;
+      return;
+    }
+    status.textContent = 'Se trimite...';
+    try {
+      const r = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(data) });
+      if (!r.ok) throw new Error();
+      form.reset();
+      status.textContent = 'Mulțumim! Te contactăm în cel mai scurt timp.';
+    } catch {
+      status.textContent = 'Nu am putut trimite cererea. Sună-ne la 0745 537 715.';
+    }
+  });
+</script>

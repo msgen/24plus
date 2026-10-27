@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import { clients } from '../lib/content';
+---
+<Base title="Clienți" description="Companiile care au ales 24 Plus Media pentru producție publicitară și print.">
+  <div class="container-x pt-12">
+    <p class="eyebrow">Clienți</p>
+    <h1 class="mt-2 text-4xl sm:text-5xl">Au lucrat cu noi</h1>
+    <ul class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {clients.map((c) => (
+        <li class="rounded-2xl bg-white p-6 ring-1 ring-line">
+          <h2 class="text-lg">{c.name}</h2>
+          {c.url && <a href={c.url} rel="noopener nofollow" target="_blank" class="mt-1 block text-sm font-semibold text-brand-dark hover:underline">{c.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</a>}
+        </li>
+      ))}
+    </ul>
+  </div>
+</Base>
