@@ -1,5 +1,5 @@
 // Per-request snapshot of the content collections, so templates can read content synchronously.
-// The middleware loads it once (one Redis MGET) and runs the request inside this context.
+// The middleware loads it once (one blob read on Netlify) and runs the request inside this context.
 import { AsyncLocalStorage } from 'node:async_hooks';
 import type { Snapshot } from './store';
 

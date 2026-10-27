@@ -24,7 +24,7 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
   if (path.startsWith('/api') || path.startsWith('/uploads')) {
     res = await next();
   } else {
-    // Templates read content synchronously from a per-request snapshot (one Redis round trip).
+    // Templates read content synchronously from a per-request snapshot (one blob read on Netlify).
     // Render and buffer the whole page inside the snapshot context so nothing runs outside it.
     const snap = await snapshot();
     res = await snapshotCtx.run(snap, async () => {

@@ -79,7 +79,7 @@ export async function currentUser(cookies: AstroCookies): Promise<User | null> {
   return (await read('users')).find((u) => u.id === id) ?? null;
 }
 
-// Rate limit (Redis-backed on Vercel, in-memory locally). True = limit exceeded.
+// Rate limit (blob-backed on Netlify, in-memory locally). True = limit exceeded.
 export async function tooMany(key: string, max: number, windowMs: number) {
   return (await hit(key, Math.ceil(windowMs / 1000))) > max;
 }
