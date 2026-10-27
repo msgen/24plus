@@ -12,7 +12,7 @@ if (Astro.request.method === 'POST') {
   const user = login(String(f.get('email') ?? ''), String(f.get('password') ?? ''));
   if (!user) return Astro.redirect(msg('/admin/login', 'E-mail sau parolă greșite.', 'err'));
   // Secure cookie only when the visitor really is on HTTPS (directly or via a proxy), so http://localhost works too.
-  const https = Astro.url.protocol === 'https:' || Astro.request.headers.get('x-forwarded-proto') === 'https';
+  const https = process.env.FORCE_HTTPS === '1' || Astro.url.protocol === 'https:' || Astro.request.headers.get('x-forwarded-proto') === 'https';
   startSession(Astro.cookies, user, https);
   return Astro.redirect('/admin');
 }

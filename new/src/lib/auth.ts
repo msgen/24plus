@@ -11,6 +11,11 @@ const secret = (() => {
   return fs.readFileSync(f, 'utf8');
 })();
 
+// First start on hosts without a terminal (cPanel): create the admin from env vars if no user exists yet.
+if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD && process.env.ADMIN_PASSWORD.length >= 10 && read('users').length === 0) {
+  update('users', (u) => { u.push({ id: newId(), email: process.env.ADMIN_EMAIL!.toLowerCase(), name: process.env.ADMIN_NAME ?? 'Admin', hash: hashPassword(process.env.ADMIN_PASSWORD!) }); });
+}
+
 const COOKIE = '24plus_session';
 const MAX_AGE = 60 * 60 * 12; // 12 h
 

@@ -1,8 +1,18 @@
 import { defineMiddleware } from 'astro:middleware';
 import { currentUser } from './lib/auth';
 
+// CSRF defence for every state-changing request: the Origin header's host must be this site's host.
+function crossSite(req: Request) {
+  if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return false;
+  const origin = req.headers.get('origin');
+  if (!origin) return req.headers.get('sec-fetch-site') === 'cross-site';
+  const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host');
+  try { return new URL(origin).host !== host; } catch { return true; }
+}
+
 export const onRequest = defineMiddleware(async (ctx, next) => {
   const path = ctx.url.pathname;
+  if (crossSite(ctx.request)) return new Response('Cross-site request blocked', { status: 403 });
   if (path.startsWith('/admin')) {
     const user = currentUser(ctx.cookies);
     ctx.locals.user = user;

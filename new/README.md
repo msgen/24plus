@@ -22,7 +22,7 @@ npm run dev                             # site: http://localhost:4321   admin: /
 Changes appear on the site immediately (no rebuild).
 
 ## Deploy
-Needs any host that runs Node 22+: a small VPS, or cPanel "Setup Node.js App" if available.
+Needs a host that runs Node 22.22+. **cPanel: see [DEPLOY-CPANEL.md](DEPLOY-CPANEL.md)** (`npm run package` builds the upload). A small VPS works too:
 
 **Docker (simplest on a VPS)**
 ```
