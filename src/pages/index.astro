@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import ServiceCard from '../components/ServiceCard.astro';
-import QuoteWizard from '../components/QuoteWizard.astro';
+import QuoteForm from '../components/QuoteForm.astro';
 import { getCategories, serviceBySlug, getClients, getProjects, getTestimonials, getSite } from '../lib/content';
 const site = getSite();
 const categories = getCategories();
@@ -10,12 +10,12 @@ const testimonials = getTestimonials();
 const all = getProjects();
 const byId = (id: string) => all.find((p) => p.id === id);
 const promoted = all.filter((p) => p.featured);
+const pick = (ids: string[], n: number) =>
+  (promoted.length >= n ? promoted : [...ids.map(byId), ...all].filter((p) => !!p)).filter((p, i, a) => a.indexOf(p) === i).slice(0, n);
 
 // Photos promoted in the admin ("show on home page") win; otherwise a hand-picked default set.
-const heroPhoto = promoted[0] ?? byId('litere-volumetrice-12') ?? all[0];
-const picks = ['personalizari-auto-08', 'litere-volumetrice-08', 'litere-volumetrice-19', 'personalizari-auto-05', 'litere-volumetrice-22'];
-const works = (promoted.length >= 5 ? promoted : [...picks.map(byId), ...all].filter((p) => !!p))
-  .filter((p, i, a) => a.indexOf(p) === i).slice(0, 5);
+const heroTiles = pick(['litere-volumetrice-16', 'litere-volumetrice-02', 'personalizari-auto-08'], 3);
+const works = pick(['litere-volumetrice-12', 'personalizari-auto-05', 'litere-volumetrice-08', 'litere-volumetrice-22', 'casete-luminoase-06', 'mese-candybar-02'], 6);
 const day = byId('litere-volumetrice-15');
 const night = byId('litere-volumetrice-16');
 
@@ -23,101 +23,94 @@ const featured = ['litere-volumetrice', 'casete-luminoase', 'personalizari-auto'
   .map(serviceBySlug).filter((s) => !!s);
 const caption = (service: string) => serviceBySlug(service)?.title ?? service.replace(/-/g, ' ');
 
-// The hero title is editable; the part after the first comma is set in green.
-const cut = site.heroTitle.indexOf(',');
-const [titleA, titleB] = cut > 0 ? [site.heroTitle.slice(0, cut + 1), site.heroTitle.slice(cut + 1).trim()] : [site.heroTitle, ''];
+// The hero title is editable; its last word is set in green.
+const words = site.heroTitle.trim().split(/\s+/);
+const titleEnd = words.length > 1 ? words.pop()! : '';
+const titleStart = words.join(' ');
+const comma = titleStart.indexOf(',');
 
-const ticker = ['Litere volumetrice', 'Firme luminoase', 'Personalizări auto', 'Print mare', 'Obiecte promoționale'];
 const process = [
-  ['Design și consiliere', 'Ne spui ce vrei să obții, noi propunem soluția și materialele.'],
-  ['Producție', 'Lucrăm cu materiale de calitate, la prețuri corecte.'],
-  ['Asamblare și montaj', 'Echipa noastră montează lucrarea la locul ei.'],
-  ['Logistică', 'Reducem la minimum timpii de livrare.'],
-];
-const pillars = [
-  ['Design și consiliere', 'Te ajutăm să alegi materialele potrivite.', 'M12 19l7-7 3 3-7 7-3-3z M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z'],
-  ['Producție și asamblare', 'Litere, casete, print, personalizări.', 'M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9l-3.8 3.8z'],
-  ['Montaj și logistică', 'Livrăm și montăm noi, la tine.', 'M1 3h15v13H1z M16 8h4l3 3v5h-7V8z M5.5 16a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z M18.5 16a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z'],
+  ['Design și consiliere', 'Ne spui ce vrei să obții. Propunem soluția și materialele.'],
+  ['Producție', 'Materiale de calitate, la prețuri corecte.'],
+  ['Asamblare și montaj', 'Montăm noi, la locul lucrării.'],
+  ['Logistică', 'Timpi de livrare reduși la minimum.'],
 ];
 ---
-<Base title={site.name} image={heroPhoto?.full}>
-  <section class="bg-ink text-paper">
-    <div class="container-x grid items-center gap-12 py-14 lg:grid-cols-2 lg:py-24">
-      <div>
-        <p class="eyebrow eyebrow-light">Producție publicitară · Râmnicu Vâlcea</p>
-        <h1 class="display mt-6 text-[3.5rem] sm:text-8xl xl:text-[6.5rem]">{titleA}{titleB && <><br /><span class="text-brand">{titleB}</span></>}</h1>
-        <p class="mt-7 max-w-lg text-lg leading-relaxed text-[#c9ccc3]">{site.heroSubtitle}</p>
-        <div class="mt-9 flex flex-wrap gap-3">
-          <a href="#oferta" class="btn btn-primary min-h-[52px] px-7 text-base">Cere ofertă ↗</a>
-          <a href="#lucrari" class="btn btn-ghost min-h-[52px] px-7 text-base">Vezi lucrările ↓</a>
+<Base title={site.name} image={heroTiles[0]?.full}>
+  <section class="bg-paper">
+    <div class="container-x pb-14 pt-12 lg:pt-20">
+      <p class="eyebrow">Producție publicitară · Râmnicu Vâlcea</p>
+      <div class="mt-5 flex flex-wrap items-end justify-between gap-8">
+        <h1 class="display min-w-0 flex-[1_1_40rem] text-[3.5rem] sm:text-8xl xl:text-[7rem]">
+          {comma > 0 ? <>{titleStart.slice(0, comma + 1)}<br />{titleStart.slice(comma + 1).trim()}</> : titleStart}{titleEnd && <> <span class="text-brand-mid">{titleEnd}</span></>}
+        </h1>
+        <div class="min-w-0 flex-[0_1_22rem]">
+          <p class="text-[17px] leading-relaxed text-mute">{site.heroSubtitle}</p>
+          <div class="mt-6 flex flex-wrap gap-2.5">
+            <a href="#oferta" class="btn btn-dark">Cere ofertă →</a>
+            <a href="/portofoliu" class="btn btn-outline">Portofoliu</a>
+          </div>
         </div>
       </div>
-      {heroPhoto && (
-        <div class="relative">
-          <div class="h-[320px] overflow-hidden rounded-2xl bg-ink-2 shadow-[0_40px_80px_rgba(0,0,0,0.5)] sm:h-[440px] lg:h-[520px]">
-            <img src={heroPhoto.full} alt={heroPhoto.alt || caption(heroPhoto.service)} class="h-full w-full object-cover" fetchpriority="high" />
-          </div>
-          <div class="absolute -bottom-5 left-3 flex items-center gap-3.5 rounded-xl bg-brand px-5 py-3.5 text-ink sm:-left-4 sm:bottom-7">
-            <span class="font-display text-[2.5rem] font-bold leading-none">24+</span>
-            <span class="text-[13px] font-bold leading-snug">Design, producție<br />și montaj, sub un acoperiș</span>
-          </div>
-        </div>
+      {heroTiles.length === 3 && (
+        <ul class="mt-12 grid gap-3.5 md:h-[540px] md:grid-cols-[2fr_1fr] md:grid-rows-2">
+          {heroTiles.map((p, i) => (
+            <li class:list={['group relative overflow-hidden rounded-2xl bg-ink', i === 0 ? 'h-[320px] md:row-span-2 md:h-auto' : 'h-[240px] md:h-auto']}>
+              <a href="/portofoliu" class="block h-full">
+                <img src={i === 0 ? p.full : p.thumb} alt={p.alt || caption(p.service)} fetchpriority={i === 0 ? 'high' : undefined} class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                <span class="absolute bottom-5 left-0 bg-brand px-4 py-2 text-xs font-extrabold uppercase tracking-[0.06em] text-on-green">{caption(p.service)}</span>
+                {i === 0 && (
+                  <span class="absolute right-4 top-4 flex flex-col rounded-xl bg-ink px-4 py-3 text-paper">
+                    <b class="font-display text-3xl font-extrabold leading-none text-brand [font-stretch:78%]">24+</b>
+                    <span class="mt-1 text-xs font-bold">design · producție · montaj</span>
+                  </span>
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
-    <div class="container-x">
-      <ul class="grid gap-6 border-t border-white/10 pb-10 pt-8 sm:grid-cols-3">
-        {pillars.map(([t, d, icon]) => (
-          <li class="flex gap-3.5">
-            <span class="grid size-9 shrink-0 place-items-center rounded-full border-[1.5px] border-brand">
-              <svg aria-hidden="true" class="size-4 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d={icon} /></svg>
-            </span>
-            <div><h2 class="font-display text-[1.375rem] font-bold">{t}</h2><p class="mt-1 text-sm text-fog">{d}</p></div>
+  </section>
+
+  {clients.length > 0 && (
+    <section class="border-y border-line bg-paper" aria-labelledby="clienti-titlu">
+      <div class="container-x flex flex-wrap items-center gap-x-7 gap-y-3 py-6">
+        <h2 id="clienti-titlu" class="text-xs font-extrabold uppercase tracking-[0.16em] text-mute">Au lucrat cu noi</h2>
+        <ul class="flex flex-wrap items-center gap-x-3 gap-y-1 font-display text-[1.375rem] font-bold text-[#4a483f] [font-stretch:78%]">
+          {clients.map((c, i) => (
+            <li class="flex items-center gap-3">{i > 0 && <span aria-hidden="true" class="text-brand">•</span>}{c.logo ? <img src={c.logo} alt={c.name} loading="lazy" class="h-8 w-auto" /> : c.name}</li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <section class="bg-paper">
+    <div class="container-x py-20 lg:py-28">
+      <div class="grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-end">
+        <h2 class="display text-5xl sm:text-6xl">Patru categorii,<br />un singur partener.</h2>
+        <div class="space-y-4 leading-relaxed text-mute">{site.intro.map((p) => <p>{p}</p>)}</div>
+      </div>
+      <ul class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {categories.map((c, i) => (
+          <li>
+            <a href={`/servicii/${c.slug}`} class="group flex h-full min-h-[300px] flex-col gap-4 rounded-2xl bg-card p-6 transition hover:-translate-y-0.5 hover:bg-[#e3e1d8]">
+              <span class="display text-6xl text-brand-mid">{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="font-display text-[1.65rem] font-extrabold leading-tight [font-stretch:85%]">{c.title}</h3>
+              <p class="flex-1 text-sm leading-relaxed text-mute">{c.blurb}</p>
+              <span aria-hidden="true" class="grid size-10 place-items-center rounded-full bg-ink text-paper transition group-hover:bg-brand group-hover:text-on-green">→</span>
+            </a>
           </li>
         ))}
       </ul>
     </div>
   </section>
 
-  {clients.length > 0 && (
-    <section class="overflow-hidden border-y border-white/10 bg-ink py-7 text-paper" aria-label="Clienți">
-      <h2 class="container-x mb-4 text-xs font-bold uppercase tracking-[0.16em] text-fog">Au lucrat cu noi</h2>
-      <div class="marquee gap-14 whitespace-nowrap font-display text-3xl font-semibold text-[#7e8278]">
-        {[0, 1].map((copy) => clients.map((c) => (
-          <span aria-hidden={copy === 1 ? 'true' : undefined} class="flex items-center">{c.logo ? <img src={c.logo} alt={copy === 1 ? '' : c.name} loading="lazy" class="h-9 w-auto opacity-70" /> : c.name}</span>
-        )))}
-        <span aria-hidden="true" class="w-0"></span>
-      </div>
-    </section>
-  )}
-
-  <section class="bg-ink text-paper">
-    <div class="container-x py-20 lg:py-28">
-      <div class="grid gap-10 lg:grid-cols-[1fr_1.3fr]">
-        <div>
-          <p class="eyebrow eyebrow-light">Despre noi</p>
-          <h2 class="display mt-4 text-5xl sm:text-6xl">Soluții complete,<br />la prețuri <span class="text-brand">corecte.</span></h2>
-        </div>
-        <div class="space-y-5 text-lg leading-relaxed text-[#c9ccc3]">{site.intro.map((p) => <p>{p}</p>)}</div>
-      </div>
-      <div class="mt-14 grid border-t border-white/10 sm:grid-cols-2 lg:grid-cols-4">
-        {categories.map((c, i) => (
-          <a href={`/servicii/${c.slug}`} class="group flex flex-col gap-3 border-white/10 py-8 transition max-lg:border-b sm:px-6 sm:odd:border-r lg:border-r lg:first:pl-0 lg:last:border-r-0">
-            <span class="font-display text-5xl font-bold text-[#4a4d46] transition group-hover:text-brand">{String(i + 1).padStart(2, '0')}</span>
-            <h3 class="font-display text-[1.75rem] font-bold leading-tight group-hover:text-brand">{c.title}</h3>
-            <p class="text-sm text-fog">{c.blurb}</p>
-          </a>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="bg-paper">
+  <section class="border-t border-line bg-paper">
     <div class="container-x py-20 lg:py-28">
       <div class="flex flex-wrap items-end justify-between gap-6">
-        <div>
-          <p class="eyebrow">Ce facem</p>
-          <h2 class="display mt-4 text-5xl sm:text-6xl">Servicii populare.</h2>
-        </div>
+        <h2 class="display text-5xl sm:text-6xl">Servicii <span class="text-brand-mid">populare.</span></h2>
         <a href="/servicii" class="btn btn-outline">Toate serviciile →</a>
       </div>
       <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -126,32 +119,21 @@ const pillars = [
     </div>
   </section>
 
-  <div aria-hidden="true" class="overflow-hidden border-b border-white/[0.08] bg-night py-5">
-    <div class="marquee gap-10 whitespace-nowrap font-display text-[2.75rem] font-bold uppercase leading-none sm:text-7xl">
-      {[0, 1].map(() => ticker.map((t, i) => <span class:list={[i % 2 ? 'text-brand' : 'text-transparent [-webkit-text-stroke:1.5px_#5e625a]']}>{t} ·</span>))}
-      <span class="w-0"></span>
-    </div>
-  </div>
-
-  {works.length >= 5 && (
+  {works.length > 0 && (
     <section id="lucrari" class="scroll-mt-20 bg-ink text-paper">
       <div class="container-x py-20 lg:py-28">
         <div class="flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <p class="eyebrow eyebrow-light">Din atelier, pe stradă</p>
-            <h2 class="display mt-4 text-5xl sm:text-6xl">Lucrări recente.</h2>
-          </div>
-          <a href="/portofoliu" class="btn btn-ghost">Tot portofoliul ↗</a>
+          <h2 class="display text-5xl sm:text-6xl">Lucrări <span class="text-brand">recente.</span></h2>
+          <a href="/portofoliu" class="btn btn-ghost">Tot portofoliul →</a>
         </div>
-        <ul class="mt-11 grid gap-3.5 md:h-[540px] md:grid-cols-[2fr_1fr_1fr] md:grid-rows-2">
-          {works.map((p, i) => (
-            <li class:list={['group relative overflow-hidden rounded-xl bg-ink-2', i === 0 ? 'h-[320px] md:row-span-2 md:h-auto' : 'h-[240px] md:h-auto']}>
-              <a href="/portofoliu" class="block h-full">
-                <img src={i === 0 ? p.full : p.thumb} alt={p.alt || caption(p.service)} loading="lazy" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
-                <span class="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 bg-night/80 px-4 py-3">
-                  <span><b class="font-display text-xl">{caption(p.service)}</b>{p.alt && <span class="ml-2.5 text-[13px] text-fog">{p.alt}</span>}</span>
-                  {i === 0 && <span aria-hidden="true" class="grid size-8 shrink-0 place-items-center rounded-full bg-brand font-extrabold text-ink">→</span>}
-                </span>
+        <ul class="mt-11 grid gap-x-5 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
+          {works.map((p) => (
+            <li>
+              <a href="/portofoliu" class="group block">
+                <div class="h-[260px] overflow-hidden rounded-2xl bg-ink-2">
+                  <img src={p.thumb} alt={p.alt || caption(p.service)} loading="lazy" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                </div>
+                <p class="mt-3 text-[15px]"><b>{caption(p.service)}</b>{p.alt && <span class="text-fog"> · {p.alt}</span>}</p>
               </a>
             </li>
           ))}
@@ -162,41 +144,34 @@ const pillars = [
 
   {day && night && (
     <section class="bg-paper">
-      <div class="container-x grid items-center gap-14 py-20 lg:grid-cols-[1fr_1.25fr] lg:py-28">
-        <div>
-          <p class="eyebrow">Firme luminoase</p>
-          <h2 class="display mt-4 text-5xl sm:text-6xl">Aceeași firmă,<br />zi și noapte.</h2>
-          <p class="mt-5 text-[17px] leading-relaxed text-mute">Trage de cursor și vezi aceeași fațadă ziua și seara: Popasul Trei Stejari, cu litere volumetrice luminoase făcute de noi.</p>
-          <ul class="mt-6 space-y-3 text-[15px] font-semibold">
-            {['Litere volumetrice, casete luminoase și totemuri', 'Design și alegerea materialelor incluse', 'Asamblare și montaj făcute de echipa noastră'].map((t) => (
-              <li class="flex items-center gap-2.5"><span aria-hidden="true" class="grid size-5 shrink-0 place-items-center rounded-full bg-brand text-xs font-extrabold text-ink">✓</span>{t}</li>
-            ))}
-          </ul>
-          <a href="/servicii/productie-publicitara/casete-luminoase" class="btn btn-dark mt-8">Vezi firmele luminoase →</a>
+      <div class="container-x py-20 lg:py-28">
+        <div class="flex flex-wrap items-end justify-between gap-6">
+          <h2 class="display text-5xl sm:text-6xl">Aceeași firmă,<br />zi și noapte.</h2>
+          <p class="max-w-md leading-relaxed text-mute">Popasul Trei Stejari: litere volumetrice care se citesc ziua și se aprind seara. Design, producție și montaj, de la noi.</p>
         </div>
-        <div id="zi-noapte" class="relative h-[300px] overflow-hidden rounded-2xl bg-ink sm:h-[420px] lg:h-[460px]" style="--pos: 50%">
-          <img src={day.full} alt="Popasul Trei Stejari, ziua" loading="lazy" class="absolute inset-0 h-full w-full object-cover" />
-          <img src={night.full} alt="Popasul Trei Stejari, noaptea, cu literele aprinse" loading="lazy" class="absolute inset-0 h-full w-full object-cover [clip-path:inset(0_0_0_var(--pos))]" />
-          <span aria-hidden="true" class="pointer-events-none absolute inset-y-0 left-[var(--pos)] -ml-px w-0.5 bg-brand"></span>
-          <span aria-hidden="true" class="pointer-events-none absolute left-[var(--pos)] top-1/2 -ml-5 -mt-5 grid size-10 place-items-center rounded-full bg-brand font-extrabold text-ink">⇔</span>
-          <span class="absolute left-3.5 top-3.5 rounded-md bg-night/75 px-2.5 py-1 text-xs font-extrabold tracking-[0.1em] text-paper">ZIUA</span>
-          <span class="absolute right-3.5 top-3.5 rounded-md bg-night/75 px-2.5 py-1 text-xs font-extrabold tracking-[0.1em] text-paper">NOAPTEA</span>
-          <input type="range" min="0" max="100" value="50" aria-label="Compară fațada ziua și noaptea" class="absolute inset-0 m-0 h-full w-full cursor-ew-resize opacity-0" />
+        <div class="mt-10 grid gap-3.5 md:grid-cols-2">
+          <figure class="relative h-[300px] overflow-hidden rounded-2xl sm:h-[380px]">
+            <img src={day.full} alt="Popasul Trei Stejari, ziua" loading="lazy" class="h-full w-full object-cover" />
+            <figcaption class="absolute left-4 top-4 rounded-lg bg-paper px-3 py-1.5 text-xs font-extrabold tracking-[0.12em]">ZIUA</figcaption>
+          </figure>
+          <figure class="relative h-[300px] overflow-hidden rounded-2xl sm:h-[380px]">
+            <img src={night.full} alt="Popasul Trei Stejari, noaptea, cu literele aprinse" loading="lazy" class="h-full w-full object-cover" />
+            <figcaption class="absolute left-4 top-4 rounded-lg bg-ink px-3 py-1.5 text-xs font-extrabold tracking-[0.12em] text-paper">NOAPTEA</figcaption>
+          </figure>
         </div>
       </div>
     </section>
   )}
 
-  <section class="bg-ink text-paper">
+  <section class="border-t border-line bg-paper">
     <div class="container-x py-20 lg:py-28">
-      <p class="eyebrow eyebrow-light">Cum lucrăm</p>
-      <h2 class="display mt-4 text-5xl sm:text-6xl">De la idee la montaj.</h2>
+      <h2 class="display text-5xl sm:text-6xl">Cum lucrăm.</h2>
       <ol class="mt-12 grid gap-7 sm:grid-cols-2 lg:grid-cols-4">
         {process.map(([t, d], i) => (
-          <li class="border-t-2 border-brand pt-5">
-            <span class="font-display text-[2.75rem] font-bold text-[#4a4d46]">{String(i + 1).padStart(2, '0')}</span>
-            <h3 class="mt-2 font-display text-[1.65rem] font-bold">{t}</h3>
-            <p class="mt-2 text-[15px] leading-relaxed text-fog">{d}</p>
+          <li class="border-t-2 border-ink pt-6">
+            <span class="grid size-11 place-items-center rounded-full bg-brand font-extrabold text-on-green">{i + 1}</span>
+            <h3 class="mt-4 font-display text-2xl font-extrabold [font-stretch:85%]">{t}</h3>
+            <p class="mt-2 text-[15px] leading-relaxed text-mute">{d}</p>
           </li>
         ))}
       </ol>
@@ -204,10 +179,9 @@ const pillars = [
   </section>
 
   {testimonials.length > 0 && (
-    <section class="bg-paper">
+    <section class="border-t border-line bg-paper">
       <div class="container-x py-20 lg:py-28">
-        <p class="eyebrow">Testimoniale</p>
-        <h2 class="display mt-4 text-5xl sm:text-6xl">Ce spun clienții.</h2>
+        <h2 class="display text-5xl sm:text-6xl">Ce spun <span class="text-brand-mid">clienții.</span></h2>
         <ul class="mt-10 grid gap-5 md:grid-cols-3">
           {testimonials.map((t) => (
             <li class="card p-6">
@@ -220,22 +194,17 @@ const pillars = [
     </section>
   )}
 
-  <section id="oferta" class="scroll-mt-20 bg-brand text-ink">
-    <div class="container-x grid items-center gap-12 py-20 lg:grid-cols-[1fr_1.15fr] lg:py-24">
+  <section id="oferta" class="scroll-mt-20 bg-brand text-on-green">
+    <div class="container-x grid items-center gap-12 py-20 lg:grid-cols-[1.1fr_1fr] lg:py-24">
       <div>
-        <p class="eyebrow text-ink before:bg-ink">Cere o ofertă</p>
-        <h2 class="display mt-4 text-5xl sm:text-6xl lg:text-7xl">Ce producem<br />pentru brandul tău?</h2>
-        <p class="mt-5 max-w-md text-[17px] font-medium leading-relaxed">Trei pași scurți și cererea ajunge direct la noi. Sau sună-ne, dacă e mai simplu.</p>
-        <p class="mt-6 flex flex-wrap gap-x-6 gap-y-2 font-display text-[1.75rem] font-bold">
+        <h2 class="display text-6xl sm:text-7xl lg:text-[5.5rem]">Hai să discutăm<br />proiectul tău.</h2>
+        <p class="mt-6 max-w-md text-[17px] font-medium leading-relaxed">Sună-ne sau lasă-ne datele și te contactăm noi.</p>
+        <p class="mt-5 flex flex-wrap gap-x-6 gap-y-2 font-display text-[1.75rem] font-extrabold [font-stretch:85%]">
           <a href={site.phoneHref} class="underline decoration-2 underline-offset-4 hover:decoration-transparent">{site.phone}</a>
           <a href={`mailto:${site.email}`} class="underline decoration-2 underline-offset-4 hover:decoration-transparent">{site.email}</a>
         </p>
       </div>
-      <QuoteWizard />
+      <QuoteForm />
     </div>
   </section>
 </Base>
-<script>
-  const box = document.getElementById('zi-noapte');
-  box?.querySelector('input')?.addEventListener('input', (e) => box.style.setProperty('--pos', `${(e.target as HTMLInputElement).value}%`));
-</script>
