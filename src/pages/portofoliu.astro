@@ -8,8 +8,8 @@ const filters = getServices().filter((s) => projects.some((p) => p.service === s
 <Base title="Portofoliu" description="Lucrări realizate de 24 Plus Media: litere volumetrice, firme luminoase, personalizări auto, vitrine și multe altele.">
   <PageHero eyebrow="Portofoliu" title="Lucrările" accent="noastre.">
     <div class="mt-10 flex flex-wrap gap-2" role="group" aria-label="Filtrează lucrările">
-      <button class="filter btn btn-sm rounded-full border border-white/35 aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-ink hover:border-brand" data-filter="all" aria-pressed="true">Toate</button>
-      {filters.map((s) => <button class="filter btn btn-sm rounded-full border border-white/35 aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-ink hover:border-brand" data-filter={s.slug} aria-pressed="false">{s.title}</button>)}
+      <button class="filter btn btn-sm rounded-full border-[1.5px] border-ink aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-on-green hover:bg-card" data-filter="all" aria-pressed="true">Toate</button>
+      {filters.map((s) => <button class="filter btn btn-sm rounded-full border-[1.5px] border-ink aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-on-green hover:bg-card" data-filter={s.slug} aria-pressed="false">{s.title}</button>)}
     </div>
   </PageHero>
   <div class="container-x py-12 lg:py-16">

@@ -8,7 +8,7 @@ const categories = getCategories();
 <Base title="Servicii" description="Toate serviciile 24 Plus Media: producție publicitară, printuri mari, print digital și obiecte promoționale.">
   <PageHero eyebrow="Servicii" title="Tot ce ai nevoie pentru" accent="vizibilitate.">
     <ul class="mt-10 flex flex-wrap gap-2">
-      {categories.map((c, i) => <li><a href={`#${c.slug}`} class="btn btn-ghost btn-sm"><span class="text-brand">{String(i + 1).padStart(2, '0')}</span> {c.title}</a></li>)}
+      {categories.map((c, i) => <li><a href={`#${c.slug}`} class="btn btn-outline btn-sm"><span class="text-brand-dark">{String(i + 1).padStart(2, '0')}</span> {c.title}</a></li>)}
     </ul>
   </PageHero>
   <div class="container-x pb-24">
@@ -16,7 +16,7 @@ const categories = getCategories();
       <section id={c.slug} class="scroll-mt-24 pt-16 lg:pt-20">
         <div class="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-6">
           <div class="flex items-baseline gap-4">
-            <span class="display text-6xl text-brand">{String(i + 1).padStart(2, '0')}</span>
+            <span class="display text-6xl text-brand-mid">{String(i + 1).padStart(2, '0')}</span>
             <div><h2 class="display text-4xl sm:text-5xl">{c.title}</h2><p class="mt-1 text-mute">{c.blurb}</p></div>
           </div>
           <a href={`/servicii/${c.slug}`} class="text-sm font-extrabold text-brand-dark hover:underline">Vezi categoria →</a>

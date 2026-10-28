@@ -1,25 +1,26 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/manrope';
-@import '@fontsource/barlow-condensed/600.css';
-@import '@fontsource/barlow-condensed/700.css';
+@import '@fontsource-variable/archivo/wdth.css';
 
-/* Palette: dark charcoal grounds, warm paper sections, logo green as the one accent. */
+/* Palette: warm paper ground, logo charcoal for text and dark bands, logo green as the one accent. */
 @theme {
   --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Barlow Condensed', 'Arial Narrow', ui-sans-serif, sans-serif;
-  --color-brand: #3fae2a;       /* logo green: fills, buttons, accents on dark */
+  --font-display: 'Archivo Variable', 'Arial Narrow', ui-sans-serif, sans-serif;
+  --color-brand: #3fae2a;       /* logo green: fills, buttons, accents on charcoal */
   --color-brand-light: #62cc4b; /* hover on green fills */
-  --color-brand-dark: #2c7f1d;  /* green for small text on light grounds (contrast) */
+  --color-brand-mid: #2f9420;   /* green for large headings on paper (3:1) */
+  --color-brand-dark: #2c7f1d;  /* green for small text on paper (4.5:1) */
   --color-brand-tint: #3fae2a24;
-  --color-ink: #121311;         /* main dark ground and text on light */
-  --color-ink-2: #1c1e1b;       /* raised panels on dark */
-  --color-night: #0c0d0b;       /* top bar, footer, bands */
-  --color-charcoal: #121311;    /* alias of ink, kept for older class names */
-  --color-paper: #f3f2ed;       /* light sections, text on dark */
-  --color-card: #fbfaf7;        /* cards on paper */
-  --color-line: #e2e0d8;        /* borders on paper */
-  --color-mute: #4f524b;        /* secondary text on light */
-  --color-fog: #a9ada4;         /* secondary text on dark */
+  --color-ink: #2c2b27;         /* logo charcoal: text, dark bands, footer */
+  --color-ink-2: #3a3933;       /* raised panels on charcoal */
+  --color-night: #22211e;
+  --color-charcoal: #2c2b27;    /* alias of ink, kept for older class names */
+  --color-on-green: #1a1a17;    /* text on green fills */
+  --color-paper: #f5f4ef;       /* page ground, text on charcoal */
+  --color-card: #ebe9e2;        /* cards on paper */
+  --color-line: #dedbd1;        /* borders on paper */
+  --color-mute: #5a584f;        /* secondary text on paper */
+  --color-fog: #bdbab0;         /* secondary text on charcoal */
 }
 
 @layer base {
@@ -30,24 +31,21 @@
 :focus-visible { outline: 3px solid var(--color-brand); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
 
-@keyframes marquee { to { transform: translateX(-50%); } }
-
 @layer components {
   .container-x { @apply mx-auto w-full max-w-7xl px-4 sm:px-8 lg:px-12; }
-  .display { @apply font-display font-bold leading-[0.95] tracking-[-0.01em]; }
-  .eyebrow { @apply flex items-center gap-3.5 text-xs font-bold uppercase tracking-[0.16em] text-brand-dark before:h-0.5 before:w-8 before:bg-brand before:content-['']; }
-  .eyebrow-light { @apply text-[#d9dbd4]; }
-  .marquee { @apply flex w-max animate-[marquee_45s_linear_infinite]; }
+  .display { @apply font-display font-extrabold leading-[0.92] tracking-[-0.02em] [font-stretch:78%]; }
+  .eyebrow { @apply text-xs font-extrabold uppercase tracking-[0.16em] text-brand-dark; }
+  .eyebrow-light { @apply text-brand; }
 
-  .btn { @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-lg px-6 text-sm font-extrabold transition; }
-  .btn-primary { @apply bg-brand text-ink hover:bg-brand-light; }
-  .btn-dark { @apply bg-ink text-paper hover:bg-brand hover:text-ink; }
-  .btn-ghost { @apply border border-white/35 text-paper hover:border-brand hover:text-brand; }
-  .btn-outline { @apply border-2 border-ink text-ink hover:bg-ink hover:text-paper; }
+  .btn { @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-6 text-sm font-extrabold transition; }
+  .btn-primary { @apply bg-brand text-on-green hover:bg-brand-light; }
+  .btn-dark { @apply bg-ink text-paper hover:bg-brand hover:text-on-green; }
+  .btn-ghost { @apply border-[1.5px] border-paper text-paper hover:bg-paper hover:text-ink; }
+  .btn-outline { @apply border-[1.5px] border-ink text-ink hover:bg-ink hover:text-paper; }
   .btn-sm { @apply min-h-9 px-4 text-xs; }
   .btn-danger { @apply border border-ink/30 bg-white text-ink hover:bg-ink hover:text-white; }
 
-  .field { @apply mt-1 w-full rounded-lg border border-[#d6d3c9] bg-white px-3.5 py-3 text-sm font-normal text-ink focus:border-brand; }
+  .field { @apply mt-1 w-full rounded-[10px] border-[1.5px] border-[#d6d3c9] bg-white px-3.5 py-3 text-sm font-normal text-ink focus:border-brand; }
   .label { @apply block text-sm font-bold; }
-  .card { @apply rounded-xl border border-line bg-card p-5; }
+  .card { @apply rounded-2xl bg-card p-5; }
 }
