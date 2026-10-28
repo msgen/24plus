@@ -1,4 +1,5 @@
 ---
+import Lightbox from './Lightbox.astro';
 import type { Project } from '../lib/content';
 const { items, alt } = Astro.props as { items: Project[]; alt: string };
 ---
@@ -11,14 +12,4 @@ const { items, alt } = Astro.props as { items: Project[]; alt: string };
     </li>
   ))}
 </ul>
-<dialog id="lightbox" class="m-auto max-h-[92vh] max-w-[94vw] bg-transparent p-0 backdrop:bg-black/90">
-  <form method="dialog"><button class="btn btn-primary absolute right-3 top-3" aria-label="Închide">Închide ✕</button></form>
-  <img id="lightbox-img" alt="" class="max-h-[92vh] max-w-[94vw] rounded-xl object-contain" />
-</dialog>
-<script>
-  const box = document.getElementById('lightbox') as HTMLDialogElement | null;
-  const big = document.getElementById('lightbox-img') as HTMLImageElement | null;
-  document.querySelectorAll<HTMLButtonElement>('button[data-full]').forEach((b) =>
-    b.addEventListener('click', () => { if (!box || !big) return; big.src = b.dataset.full!; big.alt = b.dataset.alt ?? ''; box.showModal(); }));
-  box?.addEventListener('click', (e) => { if (e.target === box) box.close(); });
-</script>
+<Lightbox />

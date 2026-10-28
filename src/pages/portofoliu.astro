@@ -1,9 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
+import Lightbox from '../components/Lightbox.astro';
 import { getProjects, getServices } from '../lib/content';
 const projects = getProjects();
 const filters = getServices().filter((s) => projects.some((p) => p.service === s.slug));
+const titles = new Map(getServices().map((s) => [s.slug, s.title]));
+const altFor = (p: (typeof projects)[number]) => p.alt || `Lucrare ${titles.get(p.service) ?? p.service.replace(/-/g, ' ')}`;
 ---
 <Base title="Portofoliu" description="Lucrări realizate de 24 Plus Media: litere volumetrice, firme luminoase, personalizări auto, vitrine și multe altele.">
   <PageHero eyebrow="Portofoliu" title="Lucrările" accent="noastre.">
@@ -17,25 +20,17 @@ const filters = getServices().filter((s) => projects.some((p) => p.service === s
       <ul class="columns-2 gap-3 sm:columns-3 [&>li]:mb-3">
         {projects.map((p) => (
           <li class="break-inside-avoid" data-service={p.service}>
-            <button type="button" data-full={p.full} data-alt={p.alt || p.service} class="block w-full overflow-hidden rounded-xl bg-line">
-              <img src={p.thumb} alt={p.alt || `Lucrare ${p.service.replace(/-/g, ' ')}`} loading="lazy" width="640" height="480" class="w-full transition duration-500 hover:scale-105" />
+            <button type="button" data-full={p.full} data-alt={altFor(p)} class="block w-full overflow-hidden rounded-xl bg-line">
+              <img src={p.thumb} alt={altFor(p)} loading="lazy" width="640" height="480" class="w-full transition duration-500 hover:scale-105" />
             </button>
           </li>
         ))}
       </ul>
     </div>
-    <dialog id="lightbox" class="m-auto max-h-[92vh] max-w-[94vw] bg-transparent p-0 backdrop:bg-black/90">
-      <form method="dialog"><button class="btn btn-primary absolute right-3 top-3">Închide ✕</button></form>
-      <img id="lightbox-img" alt="" class="max-h-[92vh] max-w-[94vw] rounded-xl object-contain" />
-    </dialog>
+    <Lightbox />
   </div>
 </Base>
 <script>
-  const box = document.getElementById('lightbox') as HTMLDialogElement;
-  const big = document.getElementById('lightbox-img') as HTMLImageElement;
-  document.querySelectorAll<HTMLButtonElement>('button[data-full]').forEach((b) =>
-    b.addEventListener('click', () => { big.src = b.dataset.full!; box.showModal(); }));
-  box.addEventListener('click', (e) => { if (e.target === box) box.close(); });
   const buttons = document.querySelectorAll<HTMLButtonElement>('.filter');
   buttons.forEach((btn) => btn.addEventListener('click', () => {
     const f = btn.dataset.filter;
