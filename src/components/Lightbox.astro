@@ -1,0 +1,67 @@
+---
+// Full-size viewer for the photo buttons on the page (button[data-full]).
+// Arrows, the keyboard arrow keys and swipes move between the photos currently shown;
+// photos hidden by a filter are skipped.
+---
+<dialog id="lightbox" aria-label="Fotografie mărită" class="m-0 h-dvh max-h-none w-screen max-w-none bg-black/90 p-0 backdrop:bg-black/60">
+  <div data-stage class="flex h-full w-full items-center justify-center px-3 pb-24 pt-20 sm:px-24 sm:py-8">
+    <img id="lightbox-img" alt="" class="max-h-full max-w-full rounded-xl object-contain" />
+  </div>
+  <form method="dialog"><button class="btn btn-primary absolute right-3 top-3">Închide ✕</button></form>
+  <button type="button" data-prev aria-label="Fotografia anterioară" class="absolute bottom-5 left-4 grid size-14 place-items-center rounded-full bg-paper text-ink shadow-lg transition hover:bg-brand hover:text-on-green sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
+    <svg aria-hidden="true" class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+  </button>
+  <button type="button" data-next aria-label="Fotografia următoare" class="absolute bottom-5 right-4 grid size-14 place-items-center rounded-full bg-paper text-ink shadow-lg transition hover:bg-brand hover:text-on-green sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
+    <svg aria-hidden="true" class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+  </button>
+  <p data-count aria-live="polite" class="absolute bottom-9 left-1/2 -translate-x-1/2 rounded-full bg-ink/80 px-3 py-1 text-sm font-bold text-paper sm:bottom-4"></p>
+</dialog>
+<script>
+  const box = document.getElementById('lightbox') as HTMLDialogElement | null;
+  if (box) {
+    const big = box.querySelector<HTMLImageElement>('#lightbox-img')!;
+    const stage = box.querySelector<HTMLElement>('[data-stage]')!;
+    const count = box.querySelector<HTMLElement>('[data-count]')!;
+    const prev = box.querySelector<HTMLButtonElement>('[data-prev]')!;
+    const next = box.querySelector<HTMLButtonElement>('[data-next]')!;
+    const all = [...document.querySelectorAll<HTMLButtonElement>('button[data-full]')];
+    let list: HTMLButtonElement[] = [];
+    let at = 0;
+
+    const show = (i: number) => {
+      if (!list.length) return;
+      at = (i + list.length) % list.length;
+      big.src = list[at].dataset.full!;
+      big.alt = list[at].dataset.alt ?? '';
+      count.textContent = `${at + 1} / ${list.length}`;
+      // Load the neighbours now so the next arrow press is instant.
+      for (const j of [at - 1, at + 1]) new Image().src = list[(j + list.length) % list.length].dataset.full!;
+    };
+
+    all.forEach((b) => b.addEventListener('click', () => {
+      list = all.filter((x) => x.offsetParent !== null); // only the photos currently shown
+      const single = list.length < 2;
+      prev.hidden = next.hidden = count.hidden = single;
+      show(list.indexOf(b));
+      box.showModal();
+    }));
+    prev.addEventListener('click', () => show(at - 1));
+    next.addEventListener('click', () => show(at + 1));
+    box.addEventListener('keydown', (e) => {
+      if (list.length < 2) return;
+      if (e.key === 'ArrowLeft') { e.preventDefault(); show(at - 1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); show(at + 1); }
+    });
+
+    let startX = 0;
+    stage.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
+    stage.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - startX;
+      if (list.length > 1 && Math.abs(dx) > 50) show(at + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+
+    // A click beside the photo closes; closing returns to the photo last viewed.
+    stage.addEventListener('click', (e) => { if (e.target === stage) box.close(); });
+    box.addEventListener('close', () => list[at]?.focus());
+  }
+</script>
