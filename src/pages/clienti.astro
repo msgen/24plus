@@ -1,17 +1,17 @@
 ---
 import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
 import { getClients } from '../lib/content';
 const clients = getClients();
 ---
 <Base title="Clienți" description="Companiile care au ales 24 Plus Media pentru producție publicitară și print.">
-  <div class="container-x pt-14">
-    <p class="eyebrow">Clienți</p>
-    <h1 class="display mt-3 text-5xl sm:text-7xl">Au lucrat <span class="text-brand">cu noi</span></h1>
-    <ul class="mt-12 grid border-l-2 border-t-2 border-ink sm:grid-cols-2 lg:grid-cols-3">
+  <PageHero eyebrow="Clienți" title="Au lucrat" accent="cu noi." />
+  <div class="container-x py-16 lg:py-20">
+    <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {clients.map((c) => (
-        <li class="border-b-2 border-r-2 border-ink p-6">
+        <li class="card p-6">
           {c.logo && <img src={c.logo} alt="" class="mb-3 h-12 w-auto" loading="lazy" />}
-          <h2 class="text-xl">{c.name}</h2>
+          <h2 class="font-display text-[1.75rem] font-bold leading-tight">{c.name}</h2>
           {c.url && <a href={c.url} rel="noopener nofollow" target="_blank" class="mt-1 block text-sm font-bold text-brand-dark hover:underline">{c.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</a>}
         </li>
       ))}

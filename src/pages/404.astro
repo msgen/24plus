@@ -1,11 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
 ---
 <Base title="Pagina nu a fost găsită" noindex>
-  <div class="container-x py-28">
-    <p class="eyebrow">Eroare 404</p>
-    <h1 class="display mt-3 text-6xl sm:text-8xl">Pagina <span class="text-brand">nu există</span></h1>
-    <p class="mt-5 max-w-lg text-lg text-mute">Poate a fost mutată. Încearcă de la prima pagină sau din lista de servicii.</p>
-    <div class="mt-8 flex gap-3"><a href="/" class="btn btn-primary">Prima pagină →</a><a href="/servicii" class="btn btn-dark">Servicii</a></div>
-  </div>
+  <PageHero eyebrow="Eroare 404" title="Pagina" accent="nu există." lead="Poate a fost mutată. Încearcă de la prima pagină sau din lista de servicii.">
+    <div class="mt-8 flex flex-wrap gap-3"><a href="/" class="btn btn-primary">Prima pagină →</a><a href="/servicii" class="btn btn-ghost">Servicii</a></div>
+  </PageHero>
+  <div class="py-10"></div>
 </Base>

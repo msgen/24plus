@@ -1,0 +1,89 @@
+---
+// Three-step quote request for the home page. Posts the same fields as QuoteForm to /api/quote.
+// Without JavaScript all three steps show at once and the form still submits.
+const choices = [
+  'Litere volumetrice / firme luminoase', 'Personalizări auto', 'Decorări vitrine',
+  'Print mare', 'Print digital', 'Obiecte promoționale',
+];
+const steps = ['Serviciul', 'Detalii', 'Contact'];
+---
+<form id="wizard" class="rounded-2xl bg-ink p-5 text-paper sm:p-8" action="/api/quote" method="post" novalidate>
+  <ol class="grid grid-cols-3 gap-2 text-xs font-extrabold uppercase tracking-[0.08em]" aria-label="Pași">
+    {steps.map((s, i) => <li data-tab={i} class="border-b-2 border-[#3a3d37] pb-2.5 text-[#8e9289] data-[on]:border-brand data-[on]:text-brand">{i + 1} · {s}</li>)}
+  </ol>
+
+  <fieldset data-step="0" class="mt-6">
+    <legend class="font-display text-[1.75rem] font-bold">Ce te interesează?</legend>
+    <div class="mt-4 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+      {choices.map((c) => (
+        <label class="flex min-h-[72px] cursor-pointer items-start rounded-[10px] border-[1.5px] border-[#3a3d37] bg-ink-2 p-3.5 text-sm font-bold transition hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand/15 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-brand">
+          <input type="radio" name="serviciu" value={c} class="sr-only" />{c}
+        </label>
+      ))}
+    </div>
+  </fieldset>
+
+  <fieldset data-step="1" class="mt-6">
+    <legend class="font-display text-[1.75rem] font-bold">Spune-ne câteva detalii</legend>
+    <label class="label mt-4">Detalii
+      <textarea name="mesaj" rows="5" required class="field" placeholder="Dimensiuni, cantitate, termen..."></textarea>
+    </label>
+  </fieldset>
+
+  <fieldset data-step="2" class="mt-6">
+    <legend class="font-display text-[1.75rem] font-bold">Unde te contactăm?</legend>
+    <div class="mt-4 grid gap-4 sm:grid-cols-2">
+      <label class="label">Nume<input name="nume" required autocomplete="name" class="field" /></label>
+      <label class="label">Telefon<input name="telefon" required type="tel" autocomplete="tel" class="field" /></label>
+    </div>
+    <label class="label mt-4">E-mail<input name="email" type="email" autocomplete="email" class="field" /></label>
+    <input name="website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
+    <p class="mt-4 text-xs text-fog">Prin trimitere ești de acord cu <a class="underline hover:text-brand" href="/politica-confidentialitate">politica de confidențialitate</a>.</p>
+  </fieldset>
+
+  <div class="mt-6 flex items-center justify-between gap-3">
+    <button type="button" data-back class="btn btn-ghost invisible">← Înapoi</button>
+    <button type="button" data-next class="btn btn-primary hidden">Continuă →</button>
+    <button type="submit" data-send class="btn btn-primary">Trimite cererea →</button>
+  </div>
+  <p id="wizard-status" role="status" class="mt-4 text-sm font-semibold empty:hidden"></p>
+</form>
+<script>
+  const form = document.getElementById('wizard') as HTMLFormElement;
+  const status = document.getElementById('wizard-status')!;
+  const steps = [...form.querySelectorAll<HTMLFieldSetElement>('[data-step]')];
+  const tabs = [...form.querySelectorAll<HTMLElement>('[data-tab]')];
+  const back = form.querySelector<HTMLButtonElement>('[data-back]')!;
+  const next = form.querySelector<HTMLButtonElement>('[data-next]')!;
+  const send = form.querySelector<HTMLButtonElement>('[data-send]')!;
+  let at = 0;
+  const show = (i: number) => {
+    at = i;
+    steps.forEach((s, j) => (s.hidden = j !== i));
+    tabs.forEach((t, j) => t.toggleAttribute('data-on', j <= i));
+    back.classList.toggle('invisible', i === 0);
+    next.classList.toggle('hidden', i === steps.length - 1);
+    send.classList.toggle('hidden', i !== steps.length - 1);
+  };
+  const valid = (i: number) => [...steps[i].querySelectorAll<HTMLInputElement>('input, textarea')].every((f) => f.reportValidity());
+  next.addEventListener('click', () => { if (valid(at)) show(at + 1); });
+  back.addEventListener('click', () => show(at - 1));
+  // A service choice moves straight on to the details.
+  steps[0].addEventListener('change', () => show(1));
+  show(0);
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    for (let i = 0; i < steps.length; i++) if (!valid(i)) { show(i); valid(i); return; }
+    status.textContent = 'Se trimite...';
+    try {
+      const r = await fetch('/api/quote', { method: 'POST', body: new FormData(form) });
+      if (!r.ok) throw new Error();
+      form.reset();
+      show(0);
+      status.textContent = 'Mulțumim! Te contactăm în cel mai scurt timp.';
+    } catch {
+      status.textContent = 'Nu am putut trimite cererea. Te rugăm să ne suni.';
+    }
+  });
+</script>

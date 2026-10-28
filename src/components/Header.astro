@@ -3,43 +3,62 @@ import { getCategories, servicesIn, serviceUrl, getSite } from '../lib/content';
 const categories = getCategories();
 const site = getSite();
 const path = Astro.url.pathname;
+// Short labels keep the six desktop links on one line.
+const short: Record<string, string> = { 'obiecte-promotionale': 'Promoționale' };
 const links = [{ href: '/portofoliu', label: 'Portofoliu' }, { href: '/clienti', label: 'Clienți' }, { href: '/contact', label: 'Contact' }];
 ---
-<header class="sticky top-0 z-40 border-b-2 border-ink bg-white">
-  <div class="mx-auto flex h-[68px] max-w-[88rem] items-center justify-between gap-4 px-4 sm:px-8">
-    <a href="/" class="flex items-center" aria-label="24 Plus Media, prima pagină">
-      <img src="/logo.webp" alt="24 Plus Media" width="440" height="271" class="h-11 w-auto rounded-md bg-ink p-0.5" />
+<div class="border-b border-white/10 bg-night text-[13px] text-fog">
+  <div class="container-x flex items-center justify-between gap-4 py-2.5">
+    <div class="flex flex-wrap gap-x-6 gap-y-1">
+      <a href={site.phoneHref} class="inline-flex items-center gap-2 hover:text-brand">
+        <svg aria-hidden="true" class="size-3.5 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z" /></svg>{site.phone}
+      </a>
+      <a href={`mailto:${site.email}`} class="inline-flex items-center gap-2 hover:text-brand max-sm:hidden">
+        <svg aria-hidden="true" class="size-3.5 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-10 6L2 7" /></svg>{site.email}
+      </a>
+      <span class="inline-flex items-center gap-2 max-md:hidden">
+        <svg aria-hidden="true" class="size-3.5 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z" /><circle cx="12" cy="10" r="3" /></svg>{site.address}
+      </span>
+    </div>
+    <p class="max-lg:hidden">Producție publicitară în Râmnicu Vâlcea{site.facebook && <> · <a href={site.facebook} rel="noopener" target="_blank" class="text-brand hover:underline">Facebook</a></>}</p>
+  </div>
+</div>
+
+<header class="sticky top-0 z-40 border-b border-white/10 bg-ink text-paper">
+  <div class="container-x flex h-[76px] items-center justify-between gap-6">
+    <a href="/" class="flex shrink-0 items-center" aria-label="24 Plus Media, prima pagină">
+      <img src="/logo.webp" alt="24 Plus Media" width="440" height="271" class="h-14 w-auto rounded-md" />
     </a>
 
-    <nav class="hidden items-center gap-7 text-sm font-bold md:flex" aria-label="Principal">
-      <div class="group relative">
-        <a href="/servicii" class:list={['py-5 hover:text-brand-dark', path.startsWith('/servicii') && 'text-brand-dark']}>Servicii</a>
-        <div class="absolute -left-4 top-full hidden w-[42rem] border-2 border-ink bg-white p-6 group-focus-within:block group-hover:block">
-          <div class="grid grid-cols-2 gap-6">
-            {categories.map((c) => (
-              <div>
-                <a href={`/servicii/${c.slug}`} class="font-extrabold hover:text-brand-dark">{c.title} →</a>
-                <ul class="mt-2 space-y-1 text-sm font-semibold text-mute">
-                  {servicesIn(c.slug).map((s) => <li><a href={serviceUrl(s)} class="hover:text-ink hover:underline">{s.title}</a></li>)}
-                </ul>
-              </div>
-            ))}
+    <nav class="hidden items-center gap-6 text-[15px] font-semibold xl:flex" aria-label="Principal">
+      {categories.map((c) => (
+        <div class="group relative">
+          <a href={`/servicii/${c.slug}`} class:list={['block py-7 hover:text-brand', path.startsWith(`/servicii/${c.slug}`) && 'text-brand']}>{short[c.slug] ?? c.title}</a>
+          <div class="absolute -left-5 top-full hidden w-72 rounded-b-xl border border-t-0 border-white/10 bg-ink-2 p-5 shadow-2xl group-focus-within:block group-hover:block">
+            <ul class="space-y-1.5 text-sm font-medium text-fog">
+              {servicesIn(c.slug).map((s) => <li><a href={serviceUrl(s)} class="block py-0.5 hover:text-brand">{s.title}</a></li>)}
+            </ul>
+            <a href={`/servicii/${c.slug}`} class="mt-4 block border-t border-white/10 pt-3 text-sm font-extrabold text-brand hover:underline">Toată categoria →</a>
           </div>
         </div>
-      </div>
-      {links.map((l) => <a href={l.href} class:list={['py-5 hover:text-brand-dark', path.startsWith(l.href) && 'text-brand-dark']}>{l.label}</a>)}
-      <a href="/contact#oferta" class="btn btn-dark py-2.5">Cere ofertă →</a>
+      ))}
+      {links.map((l) => <a href={l.href} class:list={['py-7 hover:text-brand', path.startsWith(l.href) && 'text-brand']}>{l.label}</a>)}
     </nav>
 
-    <details class="md:hidden">
-      <summary class="cursor-pointer list-none rounded-md border-2 border-ink px-4 py-2 text-sm font-extrabold">Meniu</summary>
-      <div class="absolute inset-x-0 top-[68px] max-h-[80vh] overflow-y-auto border-b-2 border-ink bg-white px-4 pb-6">
-        <a href="/servicii" class="block py-3 font-extrabold">Toate serviciile</a>
-        {categories.map((c) => <a href={`/servicii/${c.slug}`} class="block border-t border-line py-3 text-mute">{c.title}</a>)}
-        {links.map((l) => <a href={l.href} class="block border-t border-line py-3 font-extrabold">{l.label}</a>)}
-        <a href="/contact#oferta" class="btn btn-dark mt-3 w-full">Cere ofertă →</a>
-        <a href={site.phoneHref} class="btn btn-primary mt-2 w-full">{site.phone}</a>
-      </div>
-    </details>
+    <div class="flex items-center gap-2.5">
+      <a href="/contact#oferta" class="btn btn-primary max-sm:hidden">Cere ofertă ↗</a>
+      <details class="xl:hidden">
+        <summary class="flex size-12 cursor-pointer list-none items-center justify-center rounded-lg border border-white/25 hover:border-brand" aria-label="Meniu">
+          <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+        </summary>
+        <div class="absolute inset-x-0 top-[76px] max-h-[80vh] overflow-y-auto border-b border-white/10 bg-ink px-4 pb-6 sm:px-8">
+          <a href="/servicii" class="block py-3 font-extrabold">Toate serviciile</a>
+          {categories.map((c) => <a href={`/servicii/${c.slug}`} class="block border-t border-white/10 py-3 text-fog hover:text-brand">{c.title}</a>)}
+          {links.map((l) => <a href={l.href} class="block border-t border-white/10 py-3 font-extrabold hover:text-brand">{l.label}</a>)}
+          <a href="/contact#oferta" class="btn btn-primary mt-3 w-full">Cere ofertă ↗</a>
+          <a href={site.phoneHref} class="btn btn-ghost mt-2 w-full">{site.phone}</a>
+        </div>
+      </details>
+    </div>
   </div>
 </header>
