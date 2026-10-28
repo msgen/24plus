@@ -27,6 +27,8 @@
   html { scroll-behavior: smooth; }
   body { @apply bg-white font-sans text-ink antialiased; }
   h1, h2, h3 { @apply text-balance; }
+  /* No page scrollbar behind an open photo viewer or other modal. */
+  html:has(dialog[open]) { overflow: hidden; }
 }
 :focus-visible { outline: 3px solid var(--color-brand); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
