@@ -1,16 +1,15 @@
 ---
 import Base from '../../../layouts/Base.astro';
+import PageHero from '../../../components/PageHero.astro';
 import ServiceCard from '../../../components/ServiceCard.astro';
 import { getCategories, servicesIn } from '../../../lib/content';
 const c = getCategories().find((x) => x.slug === Astro.params.category);
 if (!c) return Astro.rewrite('/404');
 ---
 <Base title={c.title} description={c.blurb}>
-  <div class="container-x pt-14">
-    <nav class="text-sm font-semibold text-mute" aria-label="Breadcrumb"><a href="/servicii" class="hover:text-ink hover:underline">Servicii</a> / {c.title}</nav>
-    <h1 class="display mt-4 text-5xl sm:text-7xl">{c.title}</h1>
-    <p class="mt-4 max-w-2xl text-lg text-mute">{c.blurb}</p>
-    <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  <PageHero title={c.title} lead={c.blurb} crumbs={[{ href: '/servicii', label: 'Servicii' }, { label: c.title }]} />
+  <div class="container-x py-16 lg:py-20">
+    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {servicesIn(c.slug).map((s) => <ServiceCard service={s} />)}
     </div>
   </div>

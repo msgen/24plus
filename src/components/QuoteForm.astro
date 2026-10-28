@@ -3,7 +3,7 @@ import { getServices } from '../lib/content';
 const services = getServices();
 const { service = '' } = Astro.props as { service?: string };
 ---
-<form id="quote" class="space-y-4 border-2 border-ink bg-white p-6" novalidate>
+<form id="quote" class="space-y-4 rounded-2xl border border-line bg-card p-6 sm:p-8" novalidate>
   <div class="grid gap-4 sm:grid-cols-2">
     <label class="label">Nume
       <input name="nume" required autocomplete="name" class="field" />

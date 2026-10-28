@@ -1,22 +1,23 @@
 ---
 import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
 import { getProjects, getServices } from '../lib/content';
 const projects = getProjects();
 const filters = getServices().filter((s) => projects.some((p) => p.service === s.slug));
 ---
 <Base title="Portofoliu" description="Lucrări realizate de 24 Plus Media: litere volumetrice, firme luminoase, personalizări auto, vitrine și multe altele.">
-  <div class="container-x pt-14">
-    <p class="eyebrow">Portofoliu</p>
-    <h1 class="display mt-3 text-5xl sm:text-7xl">Lucrările <span class="text-brand">noastre</span></h1>
+  <PageHero eyebrow="Portofoliu" title="Lucrările" accent="noastre.">
     <div class="mt-10 flex flex-wrap gap-2" role="group" aria-label="Filtrează lucrările">
-      <button class="filter btn btn-dark btn-sm" data-filter="all" aria-pressed="true">Toate</button>
-      {filters.map((s) => <button class="filter btn btn-sm border-2 border-ink hover:bg-brand" data-filter={s.slug} aria-pressed="false">{s.title}</button>)}
+      <button class="filter btn btn-sm rounded-full border border-white/35 aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-ink hover:border-brand" data-filter="all" aria-pressed="true">Toate</button>
+      {filters.map((s) => <button class="filter btn btn-sm rounded-full border border-white/35 aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-ink hover:border-brand" data-filter={s.slug} aria-pressed="false">{s.title}</button>)}
     </div>
-    <div class="mt-8" id="grid">
+  </PageHero>
+  <div class="container-x py-12 lg:py-16">
+    <div id="grid">
       <ul class="columns-2 gap-3 sm:columns-3 [&>li]:mb-3">
         {projects.map((p) => (
           <li class="break-inside-avoid" data-service={p.service}>
-            <button type="button" data-full={p.full} data-alt={p.alt || p.service} class="block w-full overflow-hidden border-2 border-ink bg-line">
+            <button type="button" data-full={p.full} data-alt={p.alt || p.service} class="block w-full overflow-hidden rounded-xl bg-line">
               <img src={p.thumb} alt={p.alt || `Lucrare ${p.service.replace(/-/g, ' ')}`} loading="lazy" width="640" height="480" class="w-full transition duration-500 hover:scale-105" />
             </button>
           </li>
@@ -25,7 +26,7 @@ const filters = getServices().filter((s) => projects.some((p) => p.service === s
     </div>
     <dialog id="lightbox" class="m-auto max-h-[92vh] max-w-[94vw] bg-transparent p-0 backdrop:bg-black/90">
       <form method="dialog"><button class="btn btn-primary absolute right-3 top-3">Închide ✕</button></form>
-      <img id="lightbox-img" alt="" class="max-h-[92vh] max-w-[94vw] border-2 border-white object-contain" />
+      <img id="lightbox-img" alt="" class="max-h-[92vh] max-w-[94vw] rounded-xl object-contain" />
     </dialog>
   </div>
 </Base>
@@ -41,7 +42,6 @@ const filters = getServices().filter((s) => projects.some((p) => p.service === s
     buttons.forEach((b) => {
       const on = b === btn;
       b.setAttribute('aria-pressed', String(on));
-      b.classList.toggle('btn-dark', on);
     });
     document.querySelectorAll<HTMLElement>('#grid li').forEach((li) => { li.hidden = f !== 'all' && li.dataset.service !== f; });
   }));

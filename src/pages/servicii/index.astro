@@ -1,20 +1,27 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
 import ServiceCard from '../../components/ServiceCard.astro';
 import { getCategories, servicesIn } from '../../lib/content';
 const categories = getCategories();
 ---
 <Base title="Servicii" description="Toate serviciile 24 Plus Media: producție publicitară, printuri mari, print digital și obiecte promoționale.">
-  <div class="container-x pt-14">
-    <p class="eyebrow">Servicii</p>
-    <h1 class="display mt-3 text-5xl sm:text-7xl">Tot ce ai nevoie pentru <span class="text-brand">vizibilitate</span></h1>
+  <PageHero eyebrow="Servicii" title="Tot ce ai nevoie pentru" accent="vizibilitate.">
+    <ul class="mt-10 flex flex-wrap gap-2">
+      {categories.map((c, i) => <li><a href={`#${c.slug}`} class="btn btn-ghost btn-sm"><span class="text-brand">{String(i + 1).padStart(2, '0')}</span> {c.title}</a></li>)}
+    </ul>
+  </PageHero>
+  <div class="container-x pb-24">
     {categories.map((c, i) => (
-      <section class="mt-16 border-t-2 border-ink pt-8">
-        <div class="flex items-end justify-between gap-4">
-          <div class="flex items-baseline gap-4"><span class="display text-5xl text-brand">{String(i + 1).padStart(2, '0')}</span><div><h2 class="text-3xl">{c.title}</h2><p class="mt-1 text-mute">{c.blurb}</p></div></div>
-          <a href={`/servicii/${c.slug}`} class="hidden text-sm font-extrabold hover:text-brand-dark sm:block">Vezi categoria →</a>
+      <section id={c.slug} class="scroll-mt-24 pt-16 lg:pt-20">
+        <div class="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-6">
+          <div class="flex items-baseline gap-4">
+            <span class="display text-6xl text-brand">{String(i + 1).padStart(2, '0')}</span>
+            <div><h2 class="display text-4xl sm:text-5xl">{c.title}</h2><p class="mt-1 text-mute">{c.blurb}</p></div>
+          </div>
+          <a href={`/servicii/${c.slug}`} class="text-sm font-extrabold text-brand-dark hover:underline">Vezi categoria →</a>
         </div>
-        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {servicesIn(c.slug).map((s) => <ServiceCard service={s} />)}
         </div>
       </section>
